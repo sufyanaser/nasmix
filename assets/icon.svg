@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">NASMIX</title>
+  <desc id="desc">NASMIX music arrangement assistant icon</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a5cff"/>
+      <stop offset="1" stop-color="#315fdb"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0b0e13"/>
+  <path d="M104 330V182c0-20 16-36 36-36h34l88 147V146h68c20 0 36 16 36 36v148c0 20-16 36-36 36h-35L208 221v145h-68c-20 0-36-16-36-36Z" fill="url(#g)"/>
+  <circle cx="390" cy="126" r="26" fill="#3dd598"/>
+</svg>
