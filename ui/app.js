@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 
 const state = {
   catalog: null,
+  deferredInstallPrompt: null,
   selected: {
     role: "lead",
     family: "acoustic",
@@ -29,7 +30,11 @@ const elements = {
   audio: $("audioOutput"),
   title: $("decisionTitle"),
   status: $("dataStatus"),
-  copy: $("copyPromptButton")
+  copy: $("copyPromptButton"),
+  themeToggle: $("themeToggle"),
+  themeIcon: $("themeIcon"),
+  themeLabel: $("themeLabel"),
+  install: $("installButton")
 };
 
 function option(item) {
@@ -102,6 +107,48 @@ function composePrompt() {
   elements.title.textContent = `${role.labelAr} — ${sound.labelAr}`;
 }
 
+function applyTheme(theme) {
+  const normalized = theme === "light" ? "light" : "dark";
+  document.documentElement.dataset.theme = normalized;
+  localStorage.setItem("nasmix-theme", normalized);
+
+  const isLight = normalized === "light";
+  elements.themeIcon.textContent = isLight ? "☀" : "☾";
+  elements.themeLabel.textContent = isLight ? "فاتح" : "داكن";
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", isLight ? "#ffffff" : "#0b0e13");
+}
+
+function initTheme() {
+  const saved = localStorage.getItem("nasmix-theme");
+  const systemPrefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(saved || (systemPrefersLight ? "light" : "dark"));
+
+  elements.themeToggle.addEventListener("click", () => {
+    applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
+  });
+}
+
+function initInstallFlow() {
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    state.deferredInstallPrompt = event;
+    elements.install.hidden = false;
+  });
+
+  elements.install.addEventListener("click", async () => {
+    if (!state.deferredInstallPrompt) return;
+    state.deferredInstallPrompt.prompt();
+    await state.deferredInstallPrompt.userChoice;
+    state.deferredInstallPrompt = null;
+    elements.install.hidden = true;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    state.deferredInstallPrompt = null;
+    elements.install.hidden = true;
+  });
+}
+
 function bindEvents() {
   [elements.role, elements.identity, elements.emotion, elements.section, elements.tempo]
     .forEach((element) => element.addEventListener("input", composePrompt));
@@ -129,7 +176,20 @@ function bindEvents() {
   });
 }
 
+async function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+  } catch (error) {
+    console.warn("Service worker registration failed", error);
+  }
+}
+
 async function init() {
+  initTheme();
+  initInstallFlow();
+  registerServiceWorker();
+
   try {
     const response = await fetch("data/catalog.json", { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);

@@ -1,0 +1,22 @@
+{
+  "name": "NASMIX — مساعد قرارات التوزيع",
+  "short_name": "NASMIX",
+  "description": "مساعد خفيف لاتخاذ قرارات التوزيع وبناء برومبتات موسيقية دقيقة.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#090b0f",
+  "theme_color": "#0b0e13",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
