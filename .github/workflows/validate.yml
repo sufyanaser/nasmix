@@ -1,0 +1,31 @@
+name: Validate NASMIX
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JSON
+        run: python -m json.tool data/catalog.json > /dev/null
+
+      - name: Validate required files
+        shell: bash
+        run: |
+          test -f index.html
+          test -f ui/styles.css
+          test -f ui/app.js
+          test -f data/catalog.json
+          grep -q 'ui/styles.css' index.html
+          grep -q 'ui/app.js' index.html
+          grep -q 'data/catalog.json' ui/app.js
+
+      - name: Check JavaScript syntax
+        run: node --check ui/app.js
