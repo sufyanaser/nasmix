@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NASMIX</title>
+  <link rel="stylesheet" href="ui/styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">NASMIX</p>
+        <h1>مساعد قرارات التوزيع</h1>
+      </div>
+      <span id="dataStatus" class="status">جاري تحميل البيانات…</span>
+    </header>
+
+    <section class="workspace">
+      <aside class="controls" aria-label="خيارات التوزيع">
+        <label>الوظيفة الموسيقية
+          <select id="roleSelect"></select>
+        </label>
+        <label>عائلة الصوت
+          <select id="familySelect"></select>
+        </label>
+        <label>الصوت أو الآلة
+          <select id="soundSelect"></select>
+        </label>
+        <label>الهوية
+          <select id="identitySelect"></select>
+        </label>
+        <label>الإحساس
+          <select id="emotionSelect"></select>
+        </label>
+        <label>موضع الاستخدام
+          <select id="sectionSelect"></select>
+        </label>
+        <label>السرعة BPM
+          <input id="tempoInput" type="number" min="40" max="220" value="96" />
+        </label>
+      </aside>
+
+      <section class="result-panel">
+        <div class="result-heading">
+          <div>
+            <span class="label">القرار المقترح</span>
+            <h2 id="decisionTitle">—</h2>
+          </div>
+          <button id="copyPromptButton" type="button">نسخ البرومبت</button>
+        </div>
+
+        <div class="prompt-card">
+          <h3>Prompt</h3>
+          <textarea id="promptOutput" readonly></textarea>
+        </div>
+
+        <div class="prompt-card">
+          <h3>Exclude</h3>
+          <textarea id="excludeOutput" readonly></textarea>
+        </div>
+
+        <div class="settings-grid">
+          <div><span>Category</span><strong id="categoryOutput">Custom</strong></div>
+          <div><span>Weirdness</span><strong id="weirdnessOutput">10%</strong></div>
+          <div><span>Style Influence</span><strong id="styleOutput">100%</strong></div>
+          <div><span>Audio Influence</span><strong id="audioOutput">0%</strong></div>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="ui/app.js" defer></script>
+</body>
+</html>
