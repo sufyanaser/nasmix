@@ -24,14 +24,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect Pages configuration
+        id: pages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          status_code="$(curl -sS -o /tmp/pages-response.json -w '%{http_code}' \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages")"
+
+          if [ "${status_code}" = "200" ]; then
+            echo "enabled=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          if [ "${status_code}" = "404" ]; then
+            echo "enabled=false" >> "${GITHUB_OUTPUT}"
+            echo "GitHub Pages is not enabled for ${GITHUB_REPOSITORY}; skipping deployment."
+            exit 0
+          fi
+
+          cat /tmp/pages-response.json
+          echo "Unexpected response while checking GitHub Pages: ${status_code}" >&2
+          exit 1
+
       - name: Configure Pages
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload site
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
       - name: Deploy
         id: deployment
+        if: steps.pages.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
