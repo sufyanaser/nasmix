@@ -1,0 +1,49 @@
+.full-prompt-card {
+  border-color: color-mix(in srgb, var(--ok) 55%, var(--line));
+  box-shadow: 0 0 0 1px var(--ok-soft);
+}
+
+.full-prompt-card textarea {
+  min-height: 210px;
+}
+
+.prompt-card-header > div {
+  min-width: 0;
+}
+
+.prompt-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.safe-note {
+  color: var(--ok);
+}
+
+.warning-note {
+  color: #f2b35f;
+}
+
+.isolation-card {
+  opacity: .82;
+}
+
+.locked-badge {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  cursor: help;
+}
+
+@media (max-width: 560px) {
+  .full-prompt-card textarea {
+    min-height: 260px;
+  }
+}

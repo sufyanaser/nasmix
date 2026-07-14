@@ -2,6 +2,11 @@ const $ = (id) => document.getElementById(id);
 
 const COPY_ICON = "⧉";
 const CHECK_ICON = "✓";
+const NON_VOCAL_CATEGORIES = new Set([
+  "Drums", "Bass", "Guitar", "Keyboard", "Percussion", "Strings",
+  "Synth", "FX", "Brass", "Woodwinds", "Custom"
+]);
+const GAP_ROLES = new Set(["fill", "response"]);
 
 const state = {
   catalog: null,
@@ -32,6 +37,7 @@ const elements = {
   emotion: $("emotionSelect"),
   section: $("sectionSelect"),
   tempo: $("tempoInput"),
+  fullPrompt: $("fullPromptOutput"),
   prompt: $("promptOutput"),
   isolation: $("isolationOutput"),
   exclude: $("excludeOutput"),
@@ -41,8 +47,8 @@ const elements = {
   audio: $("audioOutput"),
   title: $("decisionTitle"),
   status: $("dataStatus"),
+  copyFull: $("copyFullButton"),
   copyGeneral: $("copyGeneralButton"),
-  copyIsolation: $("copyIsolationButton"),
   copyFeedback: $("copyFeedback"),
   themeToggle: $("themeToggle"),
   themeIcon: $("themeIcon"),
@@ -60,9 +66,7 @@ function option(item) {
 function fillSelect(select, items, selectedValue) {
   select.innerHTML = "";
   items.forEach((item) => select.appendChild(option(item)));
-  if (items.some((item) => item.id === selectedValue)) {
-    select.value = selectedValue;
-  }
+  if (items.some((item) => item.id === selectedValue)) select.value = selectedValue;
 }
 
 function getById(items, id) {
@@ -84,25 +88,20 @@ function categoryPresets() {
 function refreshPresets() {
   const presets = categoryPresets();
   fillSelect(elements.preset, presets, state.selected.preset);
-
   if (!presets.some((preset) => preset.id === elements.preset.value) && presets.length) {
     elements.preset.value = presets[0].id;
   }
-
   state.selected.preset = elements.preset.value;
 }
 
 function parseCustomExclude(value) {
-  return value
-    .split(/[\n,]+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  return value.split(/[\n,]+/).map((item) => item.trim()).filter(Boolean);
 }
 
 function customPreset() {
   const name = elements.customName.value.trim() || "خيار مخصص";
   const prompt = elements.customPrompt.value.trim() ||
-    "Describe the external sound or instrument clearly, including its timbre, performance role, articulation and desired musical behavior.";
+    "Describe one external sound or instrument clearly, including its physical timbre, articulation, musical role and phrase behavior.";
 
   return {
     id: "external-custom",
@@ -116,31 +115,50 @@ function customPreset() {
   };
 }
 
+function requestedSource(preset) {
+  const firstSentence = String(preset.prompt || "").split(".")[0].trim();
+  return firstSentence || `one clearly defined ${preset.category} source`;
+}
+
 function buildIsolationPrompt(preset) {
   const category = preset.category;
+  const source = requestedSource(preset);
   const dryEnding = "No reverb, no delay, no echo, no stereo widening, no mastering effects and no unrelated layers.";
 
-  if (preset.captureRule) {
-    return `${preset.captureRule} ${dryEnding}`;
-  }
-
   if (category === "Vocals") {
-    return `STRICT VOCAL STEM ISOLATION: one lead singer only, close centered dry capture, no instruments, no backing vocals, no doubles and no choir. ${dryEnding}`;
+    return `STRICT VOCAL STEM ISOLATION: one lead singer only. Close centered dry capture. No instruments, no backing vocals, no doubles and no choir. ${dryEnding}`;
   }
 
   if (category === "Backing Vocals") {
-    return `STRICT BACKING-VOCAL STEM ISOLATION: backing voices only, no lead singer, no instruments and no additional vocal layers beyond the requested part. ${dryEnding}`;
+    return `STRICT BACKING-VOCAL STEM ISOLATION: requested backing voices only. No lead singer, no instruments and no additional vocal layers. ${dryEnding}`;
   }
 
   if (category === "Song") {
-    return "CLEAN REFERENCE MIX SPECIFICATION: preserve the requested full-song arrangement, keep every section clearly separated, avoid master-bus reverb tails and leave enough headroom for later stem separation and Cubase mixing.";
+    return "CLEAN REFERENCE MIX SPECIFICATION: preserve the requested full-song arrangement, keep sections clearly separated, avoid long master-bus reverb tails and leave headroom for later stem separation and Cubase mixing.";
   }
+
+  const instrumentalGuard = "STRICTLY INSTRUMENTAL. ZERO HUMAN VOICE, ZERO SINGING, ZERO HUMMING, ZERO CHOIR, ZERO SPOKEN WORD AND ZERO VOCAL TEXTURE.";
+  const captureRule = preset.captureRule ? `${preset.captureRule} ` : "";
 
   if (["Drums", "Percussion"].includes(category)) {
-    return `STRICT RHYTHM STEM ISOLATION: render only the selected ${category.toLowerCase()} part, with no bass, chords, melody, vocals or extra percussion families. Close dry capture with controlled tails. ${dryEnding}`;
+    return `${instrumentalGuard} REQUESTED SOURCE: ${source}. Render only this rhythm source, with no bass, chords, melody, vocals or extra percussion families. ${captureRule}Close dry capture with controlled tails. ${dryEnding}`;
   }
 
-  return `STRICT STEM ISOLATION: render only the selected ${category} sound as one clearly defined source. No bass, chords, percussion, vocals, accompaniment, second instrument or background texture. Close centered dry capture. ${dryEnding}`;
+  return `${instrumentalGuard} REQUESTED SOURCE: ${source}. Render this requested source only as one stable timbre. No bass, chords, percussion, vocals, accompaniment, second instrument or background texture. ${captureRule}Close centered dry capture. ${dryEnding}`;
+}
+
+function rolePlacement(roleId, section) {
+  if (GAP_ROLES.has(roleId)) {
+    return "Generate exactly one short answering phrase inside the selected time region only. Begin after the vocal phrase has completely ended, remain silent while the singer is active, and stop at least one beat before the next vocal entry. Maximum one bar unless the selected gap is longer.";
+  }
+  return `${section.prompt}.`;
+}
+
+function presetSettings(preset) {
+  if (Array.isArray(preset.settings)) {
+    return { weirdness: preset.settings[0], style: preset.settings[1], audio: preset.settings[2] };
+  }
+  return preset.settings || { weirdness: 8, style: 100, audio: 0 };
 }
 
 function composePrompt() {
@@ -153,28 +171,36 @@ function composePrompt() {
   const emotion = getById(catalog.emotions, elements.emotion.value);
   const section = getById(catalog.sections, elements.section.value);
   const tempo = Number(elements.tempo.value) || 96;
+  const instrumentalOpening = NON_VOCAL_CATEGORIES.has(preset.category)
+    ? "INSTRUMENTAL ONLY. The requested sound source must remain clearly identifiable from the first note to the final note."
+    : "";
 
   const generalPrompt = [
+    instrumentalOpening,
     preset.prompt,
     `${role.prompt}.`,
     `${identity.prompt}.`,
     `${tempo} BPM.`,
     `${emotion.prompt}.`,
-    `${section.prompt}.`,
+    rolePlacement(role.id, section),
     "Keep the musical function singular, purposeful and clearly separated from unrelated roles."
   ].filter(Boolean).join(" ");
 
+  const isolationPrompt = buildIsolationPrompt(preset);
+  const fullPrompt = `${generalPrompt} ${isolationPrompt}`.trim();
   const presetExcludes = Array.isArray(preset.exclude)
     ? preset.exclude
     : String(preset.exclude || "").split(",").map((value) => value.trim()).filter(Boolean);
-  const excludes = [...catalog.globalExclude, ...presetExcludes];
+  const vocalGuards = NON_VOCAL_CATEGORIES.has(preset.category)
+    ? ["vocals", "singing", "humming", "choir", "wordless voice", "spoken voice", "vocal texture", "vocal chops"]
+    : [];
+  const excludes = [...catalog.globalExclude, ...presetExcludes, ...vocalGuards];
   const uniqueExcludes = [...new Set(excludes.map((value) => value.trim()).filter(Boolean))];
-  const settings = Array.isArray(preset.settings)
-    ? { weirdness: preset.settings[0], style: preset.settings[1], audio: preset.settings[2] }
-    : (preset.settings || { weirdness: 8, style: 100, audio: 0 });
+  const settings = presetSettings(preset);
 
+  elements.fullPrompt.value = fullPrompt;
   elements.prompt.value = generalPrompt;
-  elements.isolation.value = buildIsolationPrompt(preset);
+  elements.isolation.value = isolationPrompt;
   elements.exclude.value = uniqueExcludes.join(", ");
   elements.categoryOutput.textContent = preset.category;
   elements.weirdness.textContent = `${settings.weirdness}%`;
@@ -204,7 +230,6 @@ function applyTheme(theme) {
   const normalized = theme === "light" ? "light" : "dark";
   document.documentElement.dataset.theme = normalized;
   localStorage.setItem("nasmix-theme", normalized);
-
   const isLight = normalized === "light";
   elements.themeIcon.textContent = isLight ? "☀" : "☾";
   elements.themeLabel.textContent = isLight ? "فاتح" : "داكن";
@@ -213,11 +238,8 @@ function applyTheme(theme) {
 
 function initTheme() {
   const saved = localStorage.getItem("nasmix-theme");
-  const systemPrefersLight = window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: light)").matches;
-
+  const systemPrefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
   applyTheme(saved || (systemPrefersLight ? "light" : "dark"));
-
   elements.themeToggle.addEventListener("click", () => {
     applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
   });
@@ -229,7 +251,6 @@ function initInstallFlow() {
     state.deferredInstallPrompt = event;
     elements.install.hidden = false;
   });
-
   elements.install.addEventListener("click", async () => {
     if (!state.deferredInstallPrompt) return;
     state.deferredInstallPrompt.prompt();
@@ -237,7 +258,6 @@ function initInstallFlow() {
     state.deferredInstallPrompt = null;
     elements.install.hidden = true;
   });
-
   window.addEventListener("appinstalled", () => {
     state.deferredInstallPrompt = null;
     elements.install.hidden = true;
@@ -246,7 +266,6 @@ function initInstallFlow() {
 
 async function copyText(button, text, successLabel) {
   if (!text.trim()) return;
-
   try {
     await navigator.clipboard.writeText(text);
   } catch {
@@ -284,27 +303,22 @@ function bindEvents() {
     state.selected.preset = elements.preset.value;
     composePrompt();
   });
-
   elements.customToggle.addEventListener("click", () => setCustomMode(!state.customMode));
-
   [elements.customName, elements.customPrompt, elements.customExclude]
     .forEach((element) => element.addEventListener("input", composePrompt));
-
   [elements.identity, elements.emotion, elements.section, elements.tempo]
     .forEach((element) => element.addEventListener("input", composePrompt));
 
-  elements.copyGeneral.addEventListener("click", () => {
-    copyText(elements.copyGeneral, elements.prompt.value, "تم نسخ البرومبت العام");
+  elements.copyFull.addEventListener("click", () => {
+    copyText(elements.copyFull, elements.fullPrompt.value, "تم نسخ برومبت Suno الكامل");
   });
-
-  elements.copyIsolation.addEventListener("click", () => {
-    copyText(elements.copyIsolation, elements.isolation.value, "تم نسخ برومبت العزل");
+  elements.copyGeneral.addEventListener("click", () => {
+    copyText(elements.copyGeneral, elements.prompt.value, "تم نسخ الوصف الموسيقي");
   });
 }
 
 async function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-
   try {
     await navigator.serviceWorker.register("./sw.js", { scope: "./" });
   } catch (error) {
@@ -320,11 +334,7 @@ async function loadJson(path) {
 
 function validatePresetLibrary(library, categories) {
   const counts = new Map(categories.map((category) => [category.id, 0]));
-
-  library.presets.forEach((preset) => {
-    counts.set(preset.category, (counts.get(preset.category) || 0) + 1);
-  });
-
+  library.presets.forEach((preset) => counts.set(preset.category, (counts.get(preset.category) || 0) + 1));
   const invalid = [...counts.entries()].filter(([, count]) => count !== 5);
   if (invalid.length) {
     throw new Error(`Preset count validation failed: ${invalid.map(([id, count]) => `${id}=${count}`).join(", ")}`);
@@ -342,12 +352,10 @@ async function init() {
       loadJson("data/presets-acoustic.json"),
       loadJson("data/presets-modern.json")
     ]);
-
     const presetLibrary = {
       version: acousticLibrary.version,
       presets: [...acousticLibrary.presets, ...modernLibrary.presets]
     };
-
     state.catalog = catalog;
     state.presetLibrary = presetLibrary;
     validatePresetLibrary(presetLibrary, catalog.categories);
@@ -361,14 +369,12 @@ async function init() {
     bindEvents();
     composePrompt();
 
-    elements.status.textContent =
-      `البيانات جاهزة — v${presetLibrary.version} · ${presetLibrary.presets.length} خيار`;
+    elements.status.textContent = `البيانات جاهزة — v${presetLibrary.version} · ${presetLibrary.presets.length} خيار`;
     elements.status.classList.add("ready");
   } catch (error) {
     console.error(error);
     elements.status.textContent = "تعذر تحميل بيانات التوزيع";
-    elements.prompt.value =
-      "شغّل المشروع عبر GitHub Pages أو خادم محلي وتأكد من وجود data/catalog.json ومكتبات presets.";
+    elements.fullPrompt.value = "تعذر تحميل البيانات. تأكد من تشغيل المشروع عبر GitHub Pages أو خادم محلي.";
   }
 }
 
