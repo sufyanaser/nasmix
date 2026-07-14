@@ -1,9 +1,10 @@
-const CACHE_NAME = "nasmix-shell-v1";
+const CACHE_NAME = "nasmix-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./ui/styles.css",
   "./ui/app.js",
+  "./data/catalog.json",
   "./manifest.webmanifest",
   "./assets/icon.svg"
 ];
