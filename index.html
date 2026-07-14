@@ -13,6 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="ui/styles.css" />
+  <link rel="stylesheet" href="ui/prompt-safety.css" />
 </head>
 <body>
   <main class="app-shell">
@@ -88,22 +89,39 @@
           </div>
         </div>
 
+        <div class="prompt-card full-prompt-card">
+          <div class="prompt-card-header">
+            <div>
+              <h3>برومبت Suno الكامل — استخدم هذا</h3>
+              <p class="prompt-note safe-note">يجمع وصف الآلة والدور مع عقد العزل. الصقه في خانة Styles.</p>
+            </div>
+            <button id="copyFullButton" class="copy-icon-button" type="button" aria-label="نسخ برومبت Suno الكامل" title="نسخ برومبت Suno الكامل">
+              <span class="copy-glyph" aria-hidden="true">⧉</span>
+            </button>
+          </div>
+          <textarea id="fullPromptOutput" readonly></textarea>
+        </div>
+
         <div class="prompt-card">
           <div class="prompt-card-header">
-            <h3>البرومبت العام</h3>
-            <button id="copyGeneralButton" class="copy-icon-button" type="button" aria-label="نسخ البرومبت العام" title="نسخ البرومبت العام">
+            <div>
+              <h3>الوصف الموسيقي</h3>
+              <p class="prompt-note">وصف إيجابي للآلة والدور والهوية.</p>
+            </div>
+            <button id="copyGeneralButton" class="copy-icon-button" type="button" aria-label="نسخ الوصف الموسيقي" title="نسخ الوصف الموسيقي">
               <span class="copy-glyph" aria-hidden="true">⧉</span>
             </button>
           </div>
           <textarea id="promptOutput" readonly></textarea>
         </div>
 
-        <div class="prompt-card">
+        <div class="prompt-card isolation-card">
           <div class="prompt-card-header">
-            <h3>برومبت العزل</h3>
-            <button id="copyIsolationButton" class="copy-icon-button" type="button" aria-label="نسخ برومبت العزل" title="نسخ برومبت العزل">
-              <span class="copy-glyph" aria-hidden="true">⧉</span>
-            </button>
+            <div>
+              <h3>عقد العزل — ملحق فقط</h3>
+              <p class="prompt-note warning-note">لا يُستخدم منفردًا؛ لا يصف الآلة وقد يجعل Suno يتبع الفوكال المرجعي.</p>
+            </div>
+            <span class="locked-badge" title="يُدمج تلقائيًا داخل البرومبت الكامل" aria-label="يُدمج تلقائيًا داخل البرومبت الكامل">🔒</span>
           </div>
           <textarea id="isolationOutput" readonly></textarea>
         </div>
