@@ -1,10 +1,13 @@
-const CACHE_NAME = "nasmix-shell-v2";
+const CACHE_NAME = "nasmix-shell-v3";
+
 const APP_SHELL = [
   "./",
   "./index.html",
   "./ui/styles.css",
   "./ui/app.js",
   "./data/catalog.json",
+  "./data/presets-acoustic.json",
+  "./data/presets-modern.json",
   "./manifest.webmanifest",
   "./assets/icon.svg"
 ];
@@ -20,7 +23,9 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -31,7 +36,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
 
-  if (url.pathname.endsWith("/data/catalog.json")) {
+  if (url.pathname.includes("/data/")) {
     event.respondWith(
       fetch(request, { cache: "no-store" })
         .then((response) => {
@@ -66,6 +71,7 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => cached);
+
       return cached || network;
     })
   );
