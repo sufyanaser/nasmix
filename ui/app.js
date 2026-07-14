@@ -5,8 +5,8 @@ const state = {
   deferredInstallPrompt: null,
   selected: {
     role: "lead",
-    family: "acoustic",
-    sound: "ney",
+    category: "Synth",
+    preset: "hybrid-lead",
     identity: "iraqi-shaji",
     emotion: "longing",
     section: "intro",
@@ -16,15 +16,15 @@ const state = {
 
 const elements = {
   role: $("roleSelect"),
-  family: $("familySelect"),
-  sound: $("soundSelect"),
+  category: $("categorySelect"),
+  preset: $("presetSelect"),
   identity: $("identitySelect"),
   emotion: $("emotionSelect"),
   section: $("sectionSelect"),
   tempo: $("tempoInput"),
   prompt: $("promptOutput"),
   exclude: $("excludeOutput"),
-  category: $("categoryOutput"),
+  categoryOutput: $("categoryOutput"),
   weirdness: $("weirdnessOutput"),
   style: $("styleOutput"),
   audio: $("audioOutput"),
@@ -54,57 +54,63 @@ function getById(items, id) {
   return items.find((item) => item.id === id) || items[0];
 }
 
-function refreshSounds() {
-  const sounds = state.catalog.sounds.filter((sound) => sound.family === elements.family.value);
-  fillSelect(elements.sound, sounds, state.selected.sound);
-  state.selected.sound = elements.sound.value;
+function compatiblePresets() {
+  const roleId = elements.role.value;
+  const categoryId = elements.category.value;
+  return state.catalog.presets.filter((preset) =>
+    preset.category === categoryId && preset.roles.includes(roleId)
+  );
 }
 
-function settingsFor(roleId) {
-  if (["lead", "fill", "response", "counter", "lazim"].includes(roleId)) {
-    return { weirdness: 10, style: 100, audio: 0 };
+function refreshPresets() {
+  let presets = compatiblePresets();
+  if (!presets.length) {
+    presets = state.catalog.presets.filter((preset) => preset.category === elements.category.value);
   }
-  if (roleId === "foundation") return { weirdness: 18, style: 92, audio: 0 };
-  if (roleId === "transition") return { weirdness: 24, style: 88, audio: 0 };
-  return { weirdness: 15, style: 90, audio: 0 };
+  if (!presets.length) presets = state.catalog.presets;
+
+  fillSelect(elements.preset, presets, state.selected.preset);
+  state.selected.preset = elements.preset.value;
 }
 
 function composePrompt() {
   const catalog = state.catalog;
   const role = getById(catalog.roles, elements.role.value);
-  const sound = getById(catalog.sounds, elements.sound.value);
+  const preset = getById(catalog.presets, elements.preset.value);
   const identity = getById(catalog.identities, elements.identity.value);
   const emotion = getById(catalog.emotions, elements.emotion.value);
   const section = getById(catalog.sections, elements.section.value);
   const tempo = Number(elements.tempo.value) || 96;
 
-  const soloRule = ["lead", "fill", "response", "counter", "lazim"].includes(role.id)
-    ? "Use one clearly defined sound source only, with no vocals and no unrelated accompaniment."
-    : "Keep the layer functionally isolated and free from unrelated lead material.";
-
   const prompt = [
-    `${role.prompt} using ${sound.nameEn}.`,
+    preset.prompt,
+    `${role.prompt}.`,
     `${identity.prompt}.`,
     `${tempo} BPM.`,
     `${emotion.prompt}.`,
-    `${sound.technique}.`,
     `${section.prompt}.`,
-    "Use low-density arrangement, wide dynamic range, intentional silence between phrases, and make every entrance purposeful.",
-    soloRule,
-    "Professional live or premium studio realism, human timing, micro-dynamics, and natural imperfections."
-  ].join(" ");
+    preset.captureRule || "",
+    "Keep the musical function singular and clearly defined."
+  ].filter(Boolean).join(" ");
 
-  const excludes = [...catalog.globalExclude, ...sound.exclude];
+  const excludes = [...catalog.globalExclude, ...(preset.exclude || [])];
   const uniqueExcludes = [...new Set(excludes.map((value) => value.trim()).filter(Boolean))];
-  const settings = settingsFor(role.id);
+  const settings = preset.settings || { weirdness: 8, style: 100, audio: 0 };
 
   elements.prompt.value = prompt;
   elements.exclude.value = uniqueExcludes.join(", ");
-  elements.category.textContent = sound.category;
+  elements.categoryOutput.textContent = preset.category;
   elements.weirdness.textContent = `${settings.weirdness}%`;
   elements.style.textContent = `${settings.style}%`;
   elements.audio.textContent = `${settings.audio}%`;
-  elements.title.textContent = `${role.labelAr} — ${sound.labelAr}`;
+  elements.title.textContent = `${role.labelAr} — ${preset.labelAr}`;
+}
+
+function refreshRoleAndCategory() {
+  state.selected.role = elements.role.value;
+  state.selected.category = elements.category.value;
+  refreshPresets();
+  composePrompt();
 }
 
 function applyTheme(theme) {
@@ -150,19 +156,15 @@ function initInstallFlow() {
 }
 
 function bindEvents() {
-  [elements.role, elements.identity, elements.emotion, elements.section, elements.tempo]
+  elements.role.addEventListener("change", refreshRoleAndCategory);
+  elements.category.addEventListener("change", refreshRoleAndCategory);
+  elements.preset.addEventListener("change", composePrompt);
+
+  [elements.identity, elements.emotion, elements.section, elements.tempo]
     .forEach((element) => element.addEventListener("input", composePrompt));
 
-  elements.family.addEventListener("change", () => {
-    state.selected.family = elements.family.value;
-    refreshSounds();
-    composePrompt();
-  });
-
-  elements.sound.addEventListener("change", composePrompt);
-
   elements.copy.addEventListener("click", async () => {
-    const fullSetup = `PROMPT\n${elements.prompt.value}\n\nEXCLUDE\n${elements.exclude.value}\n\nSETTINGS\nCategory: ${elements.category.textContent}\nWeirdness: ${elements.weirdness.textContent}\nStyle Influence: ${elements.style.textContent}\nAudio Influence: ${elements.audio.textContent}`;
+    const fullSetup = `PROMPT\n${elements.prompt.value}\n\nEXCLUDE\n${elements.exclude.value}\n\nSETTINGS\nCategory: ${elements.categoryOutput.textContent}\nWeirdness: ${elements.weirdness.textContent}\nStyle Influence: ${elements.style.textContent}\nAudio Influence: ${elements.audio.textContent}`;
     try {
       await navigator.clipboard.writeText(fullSetup);
       elements.copy.textContent = "تم النسخ";
@@ -196,11 +198,11 @@ async function init() {
     state.catalog = await response.json();
 
     fillSelect(elements.role, state.catalog.roles, state.selected.role);
-    fillSelect(elements.family, state.catalog.families, state.selected.family);
+    fillSelect(elements.category, state.catalog.categories, state.selected.category);
     fillSelect(elements.identity, state.catalog.identities, state.selected.identity);
     fillSelect(elements.emotion, state.catalog.emotions, state.selected.emotion);
     fillSelect(elements.section, state.catalog.sections, state.selected.section);
-    refreshSounds();
+    refreshPresets();
     bindEvents();
     composePrompt();
 
