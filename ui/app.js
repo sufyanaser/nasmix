@@ -1,12 +1,17 @@
 const $ = (id) => document.getElementById(id);
 
+const COPY_ICON = "⧉";
+const CHECK_ICON = "✓";
+
 const state = {
   catalog: null,
+  presetLibrary: null,
+  customMode: false,
   deferredInstallPrompt: null,
   selected: {
     role: "lead",
     category: "Synth",
-    preset: "hybrid-lead",
+    preset: "hybrid-iraqi-lead-v3",
     identity: "iraqi-shaji",
     emotion: "longing",
     section: "intro",
@@ -18,11 +23,17 @@ const elements = {
   role: $("roleSelect"),
   category: $("categorySelect"),
   preset: $("presetSelect"),
+  customToggle: $("customPresetToggle"),
+  customFields: $("customPresetFields"),
+  customName: $("customNameInput"),
+  customPrompt: $("customPromptInput"),
+  customExclude: $("customExcludeInput"),
   identity: $("identitySelect"),
   emotion: $("emotionSelect"),
   section: $("sectionSelect"),
   tempo: $("tempoInput"),
   prompt: $("promptOutput"),
+  isolation: $("isolationOutput"),
   exclude: $("excludeOutput"),
   categoryOutput: $("categoryOutput"),
   weirdness: $("weirdnessOutput"),
@@ -30,7 +41,9 @@ const elements = {
   audio: $("audioOutput"),
   title: $("decisionTitle"),
   status: $("dataStatus"),
-  copy: $("copyPromptButton"),
+  copyGeneral: $("copyGeneralButton"),
+  copyIsolation: $("copyIsolationButton"),
+  copyFeedback: $("copyFeedback"),
   themeToggle: $("themeToggle"),
   themeIcon: $("themeIcon"),
   themeLabel: $("themeLabel"),
@@ -47,63 +60,137 @@ function option(item) {
 function fillSelect(select, items, selectedValue) {
   select.innerHTML = "";
   items.forEach((item) => select.appendChild(option(item)));
-  if (items.some((item) => item.id === selectedValue)) select.value = selectedValue;
+  if (items.some((item) => item.id === selectedValue)) {
+    select.value = selectedValue;
+  }
 }
 
 function getById(items, id) {
   return items.find((item) => item.id === id) || items[0];
 }
 
-function compatiblePresets() {
-  const roleId = elements.role.value;
+function categoryPresets() {
   const categoryId = elements.category.value;
-  return state.catalog.presets.filter((preset) =>
-    preset.category === categoryId && preset.roles.includes(roleId)
-  );
+  const roleId = elements.role.value;
+  const presets = state.presetLibrary.presets.filter((preset) => preset.category === categoryId);
+
+  return [...presets].sort((a, b) => {
+    const aMatch = a.roles.includes(roleId) ? 1 : 0;
+    const bMatch = b.roles.includes(roleId) ? 1 : 0;
+    return bMatch - aMatch;
+  });
 }
 
 function refreshPresets() {
-  let presets = compatiblePresets();
-  if (!presets.length) {
-    presets = state.catalog.presets.filter((preset) => preset.category === elements.category.value);
-  }
-  if (!presets.length) presets = state.catalog.presets;
-
+  const presets = categoryPresets();
   fillSelect(elements.preset, presets, state.selected.preset);
+
+  if (!presets.some((preset) => preset.id === elements.preset.value) && presets.length) {
+    elements.preset.value = presets[0].id;
+  }
+
   state.selected.preset = elements.preset.value;
+}
+
+function parseCustomExclude(value) {
+  return value
+    .split(/[\n,]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function customPreset() {
+  const name = elements.customName.value.trim() || "خيار مخصص";
+  const prompt = elements.customPrompt.value.trim() ||
+    "Describe the external sound or instrument clearly, including its timbre, performance role, articulation and desired musical behavior.";
+
+  return {
+    id: "external-custom",
+    labelAr: name,
+    category: elements.category.value,
+    roles: [elements.role.value],
+    prompt,
+    exclude: parseCustomExclude(elements.customExclude.value),
+    settings: { weirdness: 8, style: 100, audio: 0 },
+    captureRule: ""
+  };
+}
+
+function buildIsolationPrompt(preset) {
+  const category = preset.category;
+  const dryEnding = "No reverb, no delay, no echo, no stereo widening, no mastering effects and no unrelated layers.";
+
+  if (preset.captureRule) {
+    return `${preset.captureRule} ${dryEnding}`;
+  }
+
+  if (category === "Vocals") {
+    return `STRICT VOCAL STEM ISOLATION: one lead singer only, close centered dry capture, no instruments, no backing vocals, no doubles and no choir. ${dryEnding}`;
+  }
+
+  if (category === "Backing Vocals") {
+    return `STRICT BACKING-VOCAL STEM ISOLATION: backing voices only, no lead singer, no instruments and no additional vocal layers beyond the requested part. ${dryEnding}`;
+  }
+
+  if (category === "Song") {
+    return "CLEAN REFERENCE MIX SPECIFICATION: preserve the requested full-song arrangement, keep every section clearly separated, avoid master-bus reverb tails and leave enough headroom for later stem separation and Cubase mixing.";
+  }
+
+  if (["Drums", "Percussion"].includes(category)) {
+    return `STRICT RHYTHM STEM ISOLATION: render only the selected ${category.toLowerCase()} part, with no bass, chords, melody, vocals or extra percussion families. Close dry capture with controlled tails. ${dryEnding}`;
+  }
+
+  return `STRICT STEM ISOLATION: render only the selected ${category} sound as one clearly defined source. No bass, chords, percussion, vocals, accompaniment, second instrument or background texture. Close centered dry capture. ${dryEnding}`;
 }
 
 function composePrompt() {
   const catalog = state.catalog;
   const role = getById(catalog.roles, elements.role.value);
-  const preset = getById(catalog.presets, elements.preset.value);
+  const preset = state.customMode
+    ? customPreset()
+    : getById(state.presetLibrary.presets, elements.preset.value);
   const identity = getById(catalog.identities, elements.identity.value);
   const emotion = getById(catalog.emotions, elements.emotion.value);
   const section = getById(catalog.sections, elements.section.value);
   const tempo = Number(elements.tempo.value) || 96;
 
-  const prompt = [
+  const generalPrompt = [
     preset.prompt,
     `${role.prompt}.`,
     `${identity.prompt}.`,
     `${tempo} BPM.`,
     `${emotion.prompt}.`,
     `${section.prompt}.`,
-    preset.captureRule || "",
-    "Keep the musical function singular and clearly defined."
+    "Keep the musical function singular, purposeful and clearly separated from unrelated roles."
   ].filter(Boolean).join(" ");
 
-  const excludes = [...catalog.globalExclude, ...(preset.exclude || [])];
+  const presetExcludes = Array.isArray(preset.exclude)
+    ? preset.exclude
+    : String(preset.exclude || "").split(",").map((value) => value.trim()).filter(Boolean);
+  const excludes = [...catalog.globalExclude, ...presetExcludes];
   const uniqueExcludes = [...new Set(excludes.map((value) => value.trim()).filter(Boolean))];
-  const settings = preset.settings || { weirdness: 8, style: 100, audio: 0 };
+  const settings = Array.isArray(preset.settings)
+    ? { weirdness: preset.settings[0], style: preset.settings[1], audio: preset.settings[2] }
+    : (preset.settings || { weirdness: 8, style: 100, audio: 0 });
 
-  elements.prompt.value = prompt;
+  elements.prompt.value = generalPrompt;
+  elements.isolation.value = buildIsolationPrompt(preset);
   elements.exclude.value = uniqueExcludes.join(", ");
   elements.categoryOutput.textContent = preset.category;
   elements.weirdness.textContent = `${settings.weirdness}%`;
   elements.style.textContent = `${settings.style}%`;
   elements.audio.textContent = `${settings.audio}%`;
   elements.title.textContent = `${role.labelAr} — ${preset.labelAr}`;
+}
+
+function setCustomMode(enabled) {
+  state.customMode = enabled;
+  elements.customFields.hidden = !enabled;
+  elements.preset.disabled = enabled;
+  elements.customToggle.classList.toggle("active", enabled);
+  elements.customToggle.setAttribute("aria-expanded", String(enabled));
+  elements.customToggle.querySelector("span[aria-hidden='true']").textContent = enabled ? "−" : "＋";
+  composePrompt();
 }
 
 function refreshRoleAndCategory() {
@@ -126,7 +213,9 @@ function applyTheme(theme) {
 
 function initTheme() {
   const saved = localStorage.getItem("nasmix-theme");
-  const systemPrefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+  const systemPrefersLight = window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: light)").matches;
+
   applyTheme(saved || (systemPrefersLight ? "light" : "dark"));
 
   elements.themeToggle.addEventListener("click", () => {
@@ -155,35 +244,90 @@ function initInstallFlow() {
   });
 }
 
+async function copyText(button, text, successLabel) {
+  if (!text.trim()) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const temporary = document.createElement("textarea");
+    temporary.value = text;
+    temporary.setAttribute("readonly", "");
+    temporary.style.position = "fixed";
+    temporary.style.opacity = "0";
+    document.body.appendChild(temporary);
+    temporary.select();
+    document.execCommand("copy");
+    temporary.remove();
+  }
+
+  const glyph = button.querySelector(".copy-glyph");
+  glyph.textContent = CHECK_ICON;
+  button.classList.add("copied");
+  button.setAttribute("aria-label", successLabel);
+  button.setAttribute("title", successLabel);
+  elements.copyFeedback.textContent = successLabel;
+
+  window.setTimeout(() => {
+    glyph.textContent = COPY_ICON;
+    button.classList.remove("copied");
+    button.setAttribute("aria-label", successLabel.replace("تم نسخ", "نسخ"));
+    button.setAttribute("title", successLabel.replace("تم نسخ", "نسخ"));
+    elements.copyFeedback.textContent = "";
+  }, 1400);
+}
+
 function bindEvents() {
   elements.role.addEventListener("change", refreshRoleAndCategory);
   elements.category.addEventListener("change", refreshRoleAndCategory);
-  elements.preset.addEventListener("change", composePrompt);
+  elements.preset.addEventListener("change", () => {
+    state.selected.preset = elements.preset.value;
+    composePrompt();
+  });
+
+  elements.customToggle.addEventListener("click", () => setCustomMode(!state.customMode));
+
+  [elements.customName, elements.customPrompt, elements.customExclude]
+    .forEach((element) => element.addEventListener("input", composePrompt));
 
   [elements.identity, elements.emotion, elements.section, elements.tempo]
     .forEach((element) => element.addEventListener("input", composePrompt));
 
-  elements.copy.addEventListener("click", async () => {
-    const fullSetup = `PROMPT\n${elements.prompt.value}\n\nEXCLUDE\n${elements.exclude.value}\n\nSETTINGS\nCategory: ${elements.categoryOutput.textContent}\nWeirdness: ${elements.weirdness.textContent}\nStyle Influence: ${elements.style.textContent}\nAudio Influence: ${elements.audio.textContent}`;
-    try {
-      await navigator.clipboard.writeText(fullSetup);
-      elements.copy.textContent = "تم النسخ";
-    } catch {
-      elements.prompt.focus();
-      elements.prompt.select();
-      document.execCommand("copy");
-      elements.copy.textContent = "تم نسخ البرومبت";
-    }
-    setTimeout(() => { elements.copy.textContent = "نسخ البرومبت"; }, 1200);
+  elements.copyGeneral.addEventListener("click", () => {
+    copyText(elements.copyGeneral, elements.prompt.value, "تم نسخ البرومبت العام");
+  });
+
+  elements.copyIsolation.addEventListener("click", () => {
+    copyText(elements.copyIsolation, elements.isolation.value, "تم نسخ برومبت العزل");
   });
 }
 
 async function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
+
   try {
     await navigator.serviceWorker.register("./sw.js", { scope: "./" });
   } catch (error) {
     console.warn("Service worker registration failed", error);
+  }
+}
+
+async function loadJson(path) {
+  const response = await fetch(path, { cache: "no-store" });
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+  return response.json();
+}
+
+function validatePresetLibrary(library, categories) {
+  const counts = new Map(categories.map((category) => [category.id, 0]));
+
+  library.presets.forEach((preset) => {
+    counts.set(preset.category, (counts.get(preset.category) || 0) + 1);
+  });
+
+  const invalid = [...counts.entries()].filter(([, count]) => count !== 5);
+  if (invalid.length) {
+    throw new Error(`Preset count validation failed: ${invalid.map(([id, count]) => `${id}=${count}`).join(", ")}`);
   }
 }
 
@@ -193,25 +337,38 @@ async function init() {
   registerServiceWorker();
 
   try {
-    const response = await fetch("data/catalog.json", { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    state.catalog = await response.json();
+    const [catalog, acousticLibrary, modernLibrary] = await Promise.all([
+      loadJson("data/catalog.json"),
+      loadJson("data/presets-acoustic.json"),
+      loadJson("data/presets-modern.json")
+    ]);
 
-    fillSelect(elements.role, state.catalog.roles, state.selected.role);
-    fillSelect(elements.category, state.catalog.categories, state.selected.category);
-    fillSelect(elements.identity, state.catalog.identities, state.selected.identity);
-    fillSelect(elements.emotion, state.catalog.emotions, state.selected.emotion);
-    fillSelect(elements.section, state.catalog.sections, state.selected.section);
+    const presetLibrary = {
+      version: acousticLibrary.version,
+      presets: [...acousticLibrary.presets, ...modernLibrary.presets]
+    };
+
+    state.catalog = catalog;
+    state.presetLibrary = presetLibrary;
+    validatePresetLibrary(presetLibrary, catalog.categories);
+
+    fillSelect(elements.role, catalog.roles, state.selected.role);
+    fillSelect(elements.category, catalog.categories, state.selected.category);
+    fillSelect(elements.identity, catalog.identities, state.selected.identity);
+    fillSelect(elements.emotion, catalog.emotions, state.selected.emotion);
+    fillSelect(elements.section, catalog.sections, state.selected.section);
     refreshPresets();
     bindEvents();
     composePrompt();
 
-    elements.status.textContent = `البيانات جاهزة — v${state.catalog.version}`;
+    elements.status.textContent =
+      `البيانات جاهزة — v${presetLibrary.version} · ${presetLibrary.presets.length} خيار`;
     elements.status.classList.add("ready");
   } catch (error) {
     console.error(error);
-    elements.status.textContent = "تعذر تحميل data/catalog.json";
-    elements.prompt.value = "شغّل المشروع عبر GitHub Pages أو خادم محلي حتى يتمكن المتصفح من قراءة ملفات JSON.";
+    elements.status.textContent = "تعذر تحميل بيانات التوزيع";
+    elements.prompt.value =
+      "شغّل المشروع عبر GitHub Pages أو خادم محلي وتأكد من وجود data/catalog.json ومكتبات presets.";
   }
 }
 
