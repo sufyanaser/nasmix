@@ -37,21 +37,44 @@
         <label>الوظيفة الموسيقية
           <select id="roleSelect"></select>
         </label>
+
         <label>نوع التراك — Suno Category
           <select id="categorySelect"></select>
         </label>
+
         <label>الخيار الجاهز حسب الوظيفة
           <select id="presetSelect"></select>
         </label>
+
+        <button id="customPresetToggle" class="custom-toggle" type="button" aria-expanded="false">
+          <span aria-hidden="true">＋</span>
+          <span>خيار مخصص غير مدرج</span>
+        </button>
+
+        <section id="customPresetFields" class="custom-fields" hidden aria-label="الخيار المخصص">
+          <label>اسم الخيار
+            <input id="customNameInput" type="text" placeholder="مثال: ليد خارجي خاص" />
+          </label>
+          <label>وصف الصوت أو البرومبت
+            <textarea id="customPromptInput" rows="5" placeholder="اكتب وصف الخيار الخارجي هنا..."></textarea>
+          </label>
+          <label>Exclude إضافي
+            <textarea id="customExcludeInput" rows="3" placeholder="اكتب العناصر الممنوعة، مفصولة بفواصل أو أسطر"></textarea>
+          </label>
+        </section>
+
         <label>الهوية
           <select id="identitySelect"></select>
         </label>
+
         <label>الإحساس
           <select id="emotionSelect"></select>
         </label>
+
         <label>موضع الاستخدام
           <select id="sectionSelect"></select>
         </label>
+
         <label>السرعة BPM
           <input id="tempoInput" type="number" min="40" max="220" value="96" />
         </label>
@@ -63,16 +86,32 @@
             <span class="label">القرار المقترح</span>
             <h2 id="decisionTitle">—</h2>
           </div>
-          <button id="copyPromptButton" type="button">نسخ البرومبت</button>
         </div>
 
         <div class="prompt-card">
-          <h3>Prompt</h3>
+          <div class="prompt-card-header">
+            <h3>البرومبت العام</h3>
+            <button id="copyGeneralButton" class="copy-icon-button" type="button" aria-label="نسخ البرومبت العام" title="نسخ البرومبت العام">
+              <span class="copy-glyph" aria-hidden="true">⧉</span>
+            </button>
+          </div>
           <textarea id="promptOutput" readonly></textarea>
         </div>
 
         <div class="prompt-card">
-          <h3>Exclude</h3>
+          <div class="prompt-card-header">
+            <h3>برومبت العزل</h3>
+            <button id="copyIsolationButton" class="copy-icon-button" type="button" aria-label="نسخ برومبت العزل" title="نسخ برومبت العزل">
+              <span class="copy-glyph" aria-hidden="true">⧉</span>
+            </button>
+          </div>
+          <textarea id="isolationOutput" readonly></textarea>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <h3>Exclude</h3>
+          </div>
           <textarea id="excludeOutput" readonly></textarea>
         </div>
 
@@ -82,6 +121,8 @@
           <div><span>Style Influence</span><strong id="styleOutput">100%</strong></div>
           <div><span>Audio Influence</span><strong id="audioOutput">0%</strong></div>
         </div>
+
+        <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
       </section>
     </section>
   </main>
