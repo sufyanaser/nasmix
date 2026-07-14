@@ -1,139 +1,62 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "roles": [
-    {"id":"lead","labelAr":"ليد رئيسي","prompt":"a focused lead phrase that carries the emotional identity without crowding the vocal"},
-    {"id":"fill","labelAr":"فِل","prompt":"short fill phrases placed only in the gaps, with intentional silence after each phrase"},
-    {"id":"lazim","labelAr":"لازمة","prompt":"a recurring signature motif with stable melodic identity and controlled repetition"},
-    {"id":"response","labelAr":"سؤال وجواب","prompt":"brief answering phrases that respond to the vocal or main melody without copying it literally"},
-    {"id":"counter","labelAr":"كونتر ميلودي","prompt":"a restrained counter-melody that supports the main line and avoids harmonic conflict"},
-    {"id":"foundation","labelAr":"أرضية","prompt":"a continuous harmonic foundation with no lead melody and no attention-seeking movement"},
-    {"id":"transition","labelAr":"انتقال","prompt":"a short transition gesture that connects sections without becoming a standalone motif"}
+    {"id":"lead","labelAr":"ليد / صولو","prompt":"a clearly featured lead or solo line with controlled phrasing and no competing melody"},
+    {"id":"fill","labelAr":"فِل / جواب","prompt":"short answering phrases only inside clear gaps, followed by intentional silence"},
+    {"id":"lazim","labelAr":"لازمة","prompt":"a concise recurring signature motif, distinct from the vocal melody"},
+    {"id":"response","labelAr":"سؤال وجواب","prompt":"brief call-and-response phrases that never overlap the vocal"},
+    {"id":"counter","labelAr":"كونتر ميلودي","prompt":"a restrained secondary line that supports without copying the main melody"},
+    {"id":"foundation","labelAr":"أرضية","prompt":"a low-density foundation with no lead contour and no attention-seeking movement"},
+    {"id":"transition","labelAr":"انتقال","prompt":"a short transition gesture connecting sections without becoming a new theme"}
   ],
-  "families": [
-    {"id":"acoustic","labelAr":"لايف شرقي"},
-    {"id":"hybrid","labelAr":"هايبرد رقمي بروح عراقية"},
-    {"id":"keys","labelAr":"مفاتيح وأرضيات"},
-    {"id":"rhythm","labelAr":"إيقاع وبيركشن"},
-    {"id":"texture","labelAr":"تيكستشر ومؤثرات"}
+  "categories": [
+    {"id":"Drums","labelAr":"درامز"},{"id":"Bass","labelAr":"بيز"},{"id":"Guitar","labelAr":"جيتار / عود"},{"id":"Keyboard","labelAr":"كيبورد"},{"id":"Percussion","labelAr":"بيركشن"},{"id":"Strings","labelAr":"وتريات"},{"id":"Synth","labelAr":"سينث"},{"id":"FX","labelAr":"مؤثرات"},{"id":"Brass","labelAr":"نحاسيات"},{"id":"Woodwinds","labelAr":"هوائيات"},{"id":"Vocals","labelAr":"غناء"},{"id":"Backing Vocals","labelAr":"غناء مساند"},{"id":"Song","labelAr":"أغنية كاملة"},{"id":"Custom","labelAr":"مخصص"}
   ],
-  "sounds": [
-    {
-      "id":"ney",
-      "family":"acoustic",
-      "labelAr":"ناي عراقي",
-      "nameEn":"authentic Iraqi Ney",
-      "category":"Woodwinds",
-      "technique":"natural breath detail, finger-hole transitions, restrained vibrato, subtle quarter-tone bends, human rubato",
-      "exclude":["vocals","singing","humming","choir","western flute","pan flute","recorder","synthetic flute","MIDI articulation","generic oriental lead"]
-    },
-    {
-      "id":"joza",
-      "family":"acoustic",
-      "labelAr":"جوزة",
-      "nameEn":"authentic Iraqi Joza",
-      "category":"Strings",
-      "technique":"real bow pressure, expressive slides, natural pitch instability, microtonal Iraqi phrasing, intimate live articulation",
-      "exclude":["western violin","classical violin","synthetic strings","MIDI strings","epic orchestra","trailer strings"]
-    },
-    {
-      "id":"iraqi-oud",
-      "family":"acoustic",
-      "labelAr":"عود عراقي أصلي",
-      "nameEn":"authentic Iraqi bowl-backed fretless oud",
-      "category":"Custom",
-      "technique":"real risha articulation, deep wooden body resonance, natural string buzz, short-neck fretless phrasing, human timing",
-      "exclude":["nylon guitar","acoustic guitar","guitar-like oud","hybrid oud-guitar","flamenco picking","synthetic oud","commercial oud","stock oriental pluck"]
-    },
-    {
-      "id":"hybrid-pluck",
-      "family":"hybrid",
-      "labelAr":"بلَك رقمي عراقي",
-      "nameEn":"original hybrid digital pluck shaped for Iraqi melodic phrasing",
-      "category":"Synth",
-      "technique":"non-guitar transient, soft asymmetric attack, microtonal pitch movement, Iraqi ornament logic, sparse motif design, no preset ethnic timbre",
-      "exclude":["nylon guitar","oud imitation","acoustic guitar","stock oriental pluck","commercial Arabic intro","bright picked strings","MIDI ethnic patch"]
-    },
-    {
-      "id":"hybrid-lead",
-      "family":"hybrid",
-      "labelAr":"ليد رقمي عراقي",
-      "nameEn":"custom monophonic hybrid lead with Iraqi phrasing",
-      "category":"Synth",
-      "technique":"controlled portamento, maqam-aware pitch inflections, restrained vibrato, breath-like envelope, expressive micro-dynamics, no western EDM phrasing",
-      "exclude":["supersaw","EDM lead","festival lead","Arabic preset lead","synth brass","MIDI ornamentation","generic oriental patch"]
-    },
-    {
-      "id":"rhodes-bed",
-      "family":"keys",
-      "labelAr":"أرضية رودز",
-      "nameEn":"warm vintage Rhodes harmonic bed",
-      "category":"Keyboard",
-      "technique":"soft sustained voicings, restrained movement, warm bell tone, low-density harmonic support, no soloing",
-      "exclude":["bright digital piano","jazz solo","busy comping","synth brass","lead melody"]
-    },
-    {
-      "id":"analog-pad",
-      "family":"keys",
-      "labelAr":"باد أنالوج",
-      "nameEn":"warm evolving analog pad",
-      "category":"Synth",
-      "technique":"slow attack, long release, subtle harmonic motion, wide but stable stereo field, no rhythmic pulse, no lead contour",
-      "exclude":["EDM supersaw","trance pad","cheap synth pad","bright arpeggio","lead melody"]
-    },
-    {
-      "id":"modern-drums",
-      "family":"rhythm",
-      "labelAr":"درامز بوب مودرن",
-      "nameEn":"modern Western-inspired pop drum groove",
-      "category":"Drums",
-      "technique":"tight kick, crisp restrained snare, controlled hi-hat detail, clean transient shape, humanized syncopation, no Arabic percussion pattern",
-      "exclude":["maqsoum","malfuf","chobi","wedding groove","darbuka loop","tabla loop","festival beat","trap","EDM"]
-    },
-    {
-      "id":"air-texture",
-      "family":"texture",
-      "labelAr":"هواء وتيكستشر",
-      "nameEn":"subtle high-frequency air texture",
-      "category":"FX",
-      "technique":"soft evolving noise, restrained harmonic shimmer, wide stereo ambience, no melody, no rhythm, no obvious riser shape",
-      "exclude":["white-noise riser","cinematic trailer FX","EDM sweep","melody","percussion"]
-    }
+  "presets": [
+    {"id":"tight-pop-drums","labelAr":"درامز بوب محكم","category":"Drums","roles":["foundation","transition"],"prompt":"Tight modern drum groove with punchy kick, restrained snare, controlled hi-hat detail and humanized timing. Low density, no Arabic loop cliché.","exclude":["trap","EDM","darbuka loop","tabla loop","busy fills","vocals"],"settings":{"weirdness":8,"style":100,"audio":0}},
+    {"id":"brush-kit","labelAr":"درامز فرش ناعم","category":"Drums","roles":["foundation","transition"],"prompt":"Soft acoustic brush-kit pulse with muted kick, dry snare brush and sparse cymbal detail. Intimate, restrained and supportive.","exclude":["rock drums","big cymbals","trap","EDM","heavy fills"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"sub-bass","labelAr":"ساب بيز نظيف","category":"Bass","roles":["foundation"],"prompt":"Single deep sub-bass layer with smooth sustained notes, minimal movement and controlled low end. No melodic distraction.","exclude":["slap bass","funk","wobble","distortion","lead melody"],"settings":{"weirdness":4,"style":100,"audio":0},"captureRule":"One defined sound source, close centered capture, no unrelated accompaniment."},
+    {"id":"acoustic-bass","labelAr":"كونترباص دافئ","category":"Bass","roles":["foundation","counter"],"prompt":"Warm acoustic double-bass with rounded attack, sparse root movement and restrained passing tones. Natural timing and no jazz walking.","exclude":["electric bass","slap","jazz walking","synth bass","solo"],"settings":{"weirdness":5,"style":100,"audio":0},"captureRule":"One performer, one instrument, close centered capture, no unrelated accompaniment."},
+    {"id":"real-oud","labelAr":"عود خشبي أصلي","category":"Guitar","roles":["foundation","fill","lazim"],"prompt":"Single short-neck bowl-backed fretless lute with paired courses, dark wooden resonance, firm plectrum attack and short natural sustain. Sparse single-note phrasing, no guitar voicings.","exclude":["nylon guitar","classical guitar","pseudo-oud","flamenco","commercial oud preset","chord strumming"],"settings":{"weirdness":4,"style":100,"audio":10},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"acoustic-guitar","labelAr":"جيتار أكوستك دافئ","category":"Guitar","roles":["foundation","fill"],"prompt":"Single steel-string acoustic guitar with warm woody body, soft fingerstyle articulation and sparse open voicings. No lead melody.","exclude":["nylon guitar","flamenco","rock strumming","solo","reverb wash"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"rhodes-bed","labelAr":"أرضية رودز","category":"Keyboard","roles":["foundation"],"prompt":"Warm vintage Rhodes bed with soft sustained voicings, restrained harmonic movement and gentle bell tone. No soloing.","exclude":["bright piano","jazz solo","busy comping","lead melody","synth brass"],"settings":{"weirdness":8,"style":100,"audio":0}},
+    {"id":"piano-punctuation","labelAr":"بيانو نقطي","category":"Keyboard","roles":["fill","transition"],"prompt":"Dry upright piano punctuation using short low-density notes at phrase endings. Natural hammer noise, immediate silence and no continuous comping.","exclude":["grand cinematic piano","arpeggio","solo","dense chords","reverb"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"riq-darbuka","labelAr":"رق ودربكة منضبط","category":"Percussion","roles":["foundation","transition"],"prompt":"Restrained live Riq and soft Darbuka pulse with natural hand timing, controlled dum and dry tak. Tasteful fills only at transitions.","exclude":["percussion solo","wedding groove","maqsoum loop","chobi","heavy fills","electronic percussion"],"settings":{"weirdness":5,"style":100,"audio":0}},
+    {"id":"shaker-detail","labelAr":"شيكر وتفاصيل","category":"Percussion","roles":["foundation","transition"],"prompt":"Minimal organic shaker and finger-percussion detail with sparse accents and human timing. Every hit has purpose.","exclude":["darbuka loop","tabla loop","festival groove","dense percussion","claps"],"settings":{"weirdness":7,"style":100,"audio":0}},
+    {"id":"joza-solo","labelAr":"جوزة صولو","category":"Strings","roles":["lead","fill","lazim","response"],"prompt":"Single Iraqi Joza with raw skin-resonator tone, natural bow friction, restrained slides and microtonal phrasing. Short purposeful phrases with silence.","exclude":["western violin","string section","synthetic strings","epic orchestra","bass","chords"],"settings":{"weirdness":5,"style":100,"audio":15},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"kaman-solo","labelAr":"كمان عراقي صولو","category":"Strings","roles":["lead","fill","lazim","response"],"prompt":"Single dark acoustic violin with controlled portamento, restrained vibrato and Iraqi phrasing. Concise vocal-like lines, never continuous.","exclude":["western classical violin","Balkan violin","gypsy violin","string section","cinematic strings"],"settings":{"weirdness":5,"style":100,"audio":15},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"cello-counter","labelAr":"تشيلو كونتر","category":"Strings","roles":["counter","fill","foundation"],"prompt":"Single warm cello in the low register with sparse bowed answers, restrained slides and long pauses. Keep clear of the vocal range.","exclude":["orchestra","trailer cello","ostinato","long solo","epic swell"],"settings":{"weirdness":5,"style":100,"audio":10}},
+    {"id":"string-bed","labelAr":"أرضية وتريات صغيرة","category":"Strings","roles":["foundation","transition"],"prompt":"Small restrained string section holding soft sustained harmony with gentle section lifts. No lead melody and no cinematic swell.","exclude":["epic orchestra","trailer strings","fast runs","ostinato","lead violin"],"settings":{"weirdness":7,"style":100,"audio":0}},
+    {"id":"hybrid-lead","labelAr":"ليد هايبرد عراقي","category":"Synth","roles":["lead","lazim","fill"],"prompt":"Original monophonic hybrid lead with a soft asymmetric attack, warm analog body, breath-like texture, controlled portamento and maqam-aware pitch bends. Premium sound-design character, not an ethnic preset.","exclude":["stock Arabic lead","oriental preset","supersaw","EDM lead","synth brass","oud imitation","ney imitation"],"settings":{"weirdness":9,"style":100,"audio":0},"captureRule":"One designed hybrid voice only, no chords, bass, percussion or accompaniment."},
+    {"id":"glass-lead","labelAr":"ليد زجاجي حديث","category":"Synth","roles":["lead","lazim"],"prompt":"Monophonic glass-organic hybrid lead with a clean transient, hollow resonant body, subtle wavetable motion and expressive pitch glide. Clear solo identity and restrained decay.","exclude":["EDM pluck","supersaw","stock ethnic lead","bright bell preset","chords","bass"],"settings":{"weirdness":10,"style":100,"audio":0}},
+    {"id":"analog-pad","labelAr":"باد أنالوج دافئ","category":"Synth","roles":["foundation"],"prompt":"Warm analog pad with slow attack, long controlled release and subtle harmonic drift. Stable background layer with no rhythmic pulse or lead contour.","exclude":["trance pad","supersaw","bright arpeggio","lead melody","cheap synth pad"],"settings":{"weirdness":10,"style":96,"audio":0}},
+    {"id":"reverse-swell","labelAr":"ريفيرس وانتقال ناعم","category":"FX","roles":["transition"],"prompt":"Short elegant reverse swell and soft downlifter designed for a clean section transition. Minimal, controlled and non-cinematic.","exclude":["huge impact","EDM riser","trailer hit","noise blast","melody"],"settings":{"weirdness":12,"style":95,"audio":0}},
+    {"id":"air-texture","labelAr":"هواء وتيكستشر","category":"FX","roles":["foundation","transition"],"prompt":"Subtle high-frequency air texture with restrained shimmer and slow movement. No melody, no rhythm and no obvious riser shape.","exclude":["white-noise riser","cinematic FX","EDM sweep","percussion","melody"],"settings":{"weirdness":14,"style":94,"audio":0}},
+    {"id":"muted-brass","labelAr":"نحاسيات مكتومة","category":"Brass","roles":["fill","transition","foundation"],"prompt":"Small muted brass color using soft sustained notes and short restrained punctuation. Warm, dry and low density.","exclude":["big band","trumpet solo","epic brass","marching brass","cinematic stabs"],"settings":{"weirdness":7,"style":100,"audio":0}},
+    {"id":"flugelhorn-solo","labelAr":"فلوجلهورن صولو","category":"Brass","roles":["lead","fill","response"],"prompt":"Single mellow flugelhorn with soft attack, warm breath, restrained vibrato and concise lyrical phrases. Dry solo capture.","exclude":["trumpet section","big band","brass stabs","jazz improvisation","reverb hall"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"ney-solo","labelAr":"ناي منفرد","category":"Woodwinds","roles":["lead","fill","lazim","response"],"prompt":"Single end-blown reed flute with dry breath attack, hollow air column, subtle pitch instability and restrained microtonal turns. Short phrases with clear silence.","exclude":["western flute","pan flute","recorder","clarinet","oboe","synthetic flute","woodwind ensemble"],"settings":{"weirdness":4,"style":100,"audio":10},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"kawala-solo","labelAr":"كولة منفردة","category":"Woodwinds","roles":["lead","fill","lazim","response"],"prompt":"Single low-pitched end-blown folk flute with earthy breath, rough natural edge and sparse descending phrases. One stable timbre only.","exclude":["western flute","ney ensemble","clarinet","synthetic wind","hybrid instrument","strings"],"settings":{"weirdness":5,"style":100,"audio":10},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"clarinet-dark","labelAr":"كلارينيت داكن","category":"Woodwinds","roles":["lead","fill","counter"],"prompt":"Single dark clarinet with woody low register, restrained bends and intimate lyrical phrasing. No orchestral doubling.","exclude":["woodwind ensemble","jazz clarinet","bright classical tone","bass","chords"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"lead-vocal-guide","labelAr":"غناء رئيسي تجريبي","category":"Vocals","roles":["lead"],"prompt":"Single exposed lead vocal guide with intimate delivery, controlled ornaments and clear phrasing. No backing vocals or choir.","exclude":["backing vocals","choir","humming","vocal doubles","heavy reverb"],"settings":{"weirdness":5,"style":100,"audio":20}},
+    {"id":"backing-unison","labelAr":"مساندة يونيسون","category":"Backing Vocals","roles":["foundation","response"],"prompt":"Restrained backing-vocal unison entering only at selected phrase endings. Short, soft and subordinate to the lead.","exclude":["choir pad","full harmony stack","humming","lead vocal","constant backing"],"settings":{"weirdness":6,"style":100,"audio":0}},
+    {"id":"song-sketch","labelAr":"سكيتش أغنية كامل","category":"Song","roles":["foundation","transition"],"prompt":"Low-density full-song sketch preserving clear vocal space, controlled section growth and purposeful entrances. Avoid generic Arabic arrangement habits.","exclude":["commercial Arabic pop","wedding arrangement","dense layers","stock oriental lead","epic orchestra"],"settings":{"weirdness":10,"style":95,"audio":0}},
+    {"id":"qanun-dry","labelAr":"قانون جاف أصلي","category":"Custom","roles":["fill","lazim","response"],"prompt":"Single trapezoidal plucked zither with grouped triple strings, dry woody transient, short decay and sparse finger-plectrum articulation. No sweeping glissando.","exclude":["synthetic qanun","harp","santur","hammered dulcimer","stock oriental pluck","arpeggio loop"],"settings":{"weirdness":4,"style":100,"audio":10},"captureRule":"One performer, one instrument, close centered dry capture, no unrelated accompaniment."},
+    {"id":"hybrid-taqsim","labelAr":"تقسيم هايبرد احترافي","category":"Custom","roles":["lead","lazim"],"prompt":"Single designed hybrid solo voice combining a muted pluck transient, warm analog core and breath-textured upper layer. Expressive monophonic taqsim with controlled portamento and original timbre.","exclude":["stock Arabic lead","oud imitation","qanun imitation","ney imitation","EDM lead","chords","bass","percussion"],"settings":{"weirdness":10,"style":100,"audio":0},"captureRule":"One designed hybrid voice only, no accompaniment or second sound source."},
+    {"id":"joza-ney-duo","labelAr":"جوزة ثم ناي","category":"Custom","roles":["response","transition"],"prompt":"Two-part call and response: one short Joza phrase followed by one short Ney answer. Never overlap; preserve clear silence between them.","exclude":["ensemble","bass","chords","percussion","simultaneous playing","reverb wash"],"settings":{"weirdness":7,"style":100,"audio":0}}
   ],
   "identities": [
-    {"id":"iraqi-shaji","labelAr":"عراقي شجي","prompt":"authentic Iraqi melodic identity with restrained quarter-tone phrasing, maqam-informed ornamentation, deep longing, and intimate human expression"},
-    {"id":"iraqi-modern","labelAr":"عراقي مودرن","prompt":"contemporary Iraqi identity combining authentic maqam phrasing with refined modern pop production and no commercial Arabic-pop clichés"},
-    {"id":"baghdad-night","labelAr":"بغدادي ليلي","prompt":"a warm Baghdad-night atmosphere with elegant urban melancholy, low density, and spacious modern production"},
-    {"id":"south-iraqi","labelAr":"جنوب عراقي","prompt":"southern Iraqi emotional character with raw acoustic expression, rural warmth, and deeply human microtonal phrasing"},
-    {"id":"neo-khaleeji","labelAr":"خليجي مودرن","prompt":"neo-pop production with refined Khaleeji influence, elegant rhythmic restraint, and premium contemporary sound"},
-    {"id":"mesopotamian","labelAr":"رافديني","prompt":"Mesopotamian emotional identity with organic acoustic detail, spacious dynamics, and ancient emotional gravity"},
-    {"id":"contemporary-eastern","labelAr":"شرقي معاصر","prompt":"contemporary Eastern identity with subtle microtonality, clean production, and no generic oriental presets"},
-    {"id":"organic-pop","labelAr":"بوب عضوي","prompt":"organic pop built from live expression, understated harmony, natural timing, and low-density arrangement"},
-    {"id":"alternative-pop","labelAr":"بوب بديل","prompt":"alternative art-pop with sparse orchestration, unusual restraint, and emotionally precise movement"},
-    {"id":"global-hybrid","labelAr":"هجين عالمي","prompt":"global hybrid production combining modern pop clarity with authentic Iraqi phrasing and premium studio realism"}
+    {"id":"iraqi-shaji","labelAr":"عراقي شجي","prompt":"Authentic Iraqi melodic identity with restrained maqam phrasing, deep longing and human expression"},
+    {"id":"iraqi-70s","labelAr":"عراقي سبعيني طربي","prompt":"Iraqi 1970s tarab identity with warm acoustic character, measured phrasing and no modern Arabic-pop cliché"},
+    {"id":"iraqi-modern","labelAr":"عراقي مودرن","prompt":"Contemporary Iraqi identity with refined production and no generic oriental presets"},
+    {"id":"baghdad-night","labelAr":"بغدادي ليلي","prompt":"Warm Baghdad-night melancholy with elegant restraint and low density"},
+    {"id":"mesopotamian","labelAr":"رافديني","prompt":"Mesopotamian emotional gravity with organic detail and spacious dynamics"},
+    {"id":"global-hybrid","labelAr":"هجين عالمي","prompt":"Premium global hybrid production with authentic Iraqi phrasing and original sound design"}
   ],
   "emotions": [
-    {"id":"longing","labelAr":"شوق","prompt":"deep longing and unresolved yearning"},
-    {"id":"heartbreak","labelAr":"وجع","prompt":"heartbreak, pain, and wounded restraint"},
-    {"id":"nostalgia","labelAr":"حنين","prompt":"nostalgia, old memories, and quiet sadness"},
-    {"id":"intimate","labelAr":"وجداني","prompt":"intimate, heartfelt, and deeply personal emotion"},
-    {"id":"romantic","labelAr":"عاطفي","prompt":"tender romantic warmth with controlled emotional expression"},
-    {"id":"dark","labelAr":"داكن","prompt":"dark melancholy and controlled emotional tension"}
+    {"id":"longing","labelAr":"شوق","prompt":"Deep longing and unresolved yearning"},{"id":"heartbreak","labelAr":"وجع","prompt":"Wounded restraint and emotional tension"},{"id":"nostalgia","labelAr":"حنين","prompt":"Old memories and quiet sadness"},{"id":"intimate","labelAr":"وجداني","prompt":"Intimate and deeply personal expression"},{"id":"dark","labelAr":"داكن","prompt":"Dark controlled melancholy"},{"id":"hopeful","labelAr":"أمل هادئ","prompt":"Restrained hope with warm emotional lift"}
   ],
   "sections": [
-    {"id":"intro","labelAr":"المقدمة","prompt":"designed for the intro with a clear opening identity and enough space for the next section"},
-    {"id":"verse","labelAr":"الكوبليه","prompt":"designed to sit between vocal phrases in the verse without masking the singer"},
-    {"id":"pre-chorus","labelAr":"قبل اللازمة","prompt":"designed to build controlled tension before the chorus"},
-    {"id":"chorus","labelAr":"اللازمة","prompt":"designed to support the chorus with a stronger emotional lift while preserving vocal space"},
-    {"id":"bridge","labelAr":"الجسر","prompt":"designed for the bridge with a fresh but coherent emotional color"},
-    {"id":"outro","labelAr":"النهاية","prompt":"designed for the ending with a restrained unresolved final gesture"}
+    {"id":"intro","labelAr":"المقدمة","prompt":"Designed for the intro with a clear identity and space for the next section"},{"id":"verse","labelAr":"الكوبليه","prompt":"Designed for the verse without masking the singer"},{"id":"pre-chorus","labelAr":"قبل اللازمة","prompt":"Build controlled tension before the chorus"},{"id":"chorus","labelAr":"اللازمة","prompt":"Provide a stronger lift while preserving vocal space"},{"id":"bridge","labelAr":"الجسر","prompt":"Bring a fresh but coherent color to the bridge"},{"id":"outro","labelAr":"النهاية","prompt":"Close with a restrained final gesture"}
   ],
-  "globalExclude": [
-    "stereotypical AI-generated Middle Eastern instrumentation",
-    "generic Suno Arabic signature sound",
-    "commercial Arabic pop cliché",
-    "preset ethnic lead",
-    "loop-based arrangement",
-    "quantized phrasing",
-    "MIDI-like articulation"
-  ]
+  "globalExclude": ["stereotypical AI-generated Middle Eastern instrumentation","generic Suno Arabic signature sound","commercial Arabic pop cliché","preset ethnic lead","loop-based arrangement","quantized phrasing","MIDI-like articulation"]
 }
