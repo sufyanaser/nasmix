@@ -1,7 +1,7 @@
-const CACHE_NAME = "nasmix-shell-v8";
+const CACHE_NAME = "nasmix-shell-v9";
 const APP_SHELL = [
-  "./","./index.html","./ui/styles.css","./ui/prompt-safety.css","./ui/compact-brief.css","./ui/projects-library.css","./ui/app.js",
-  "./ui/project-store.js","./ui/song-brief.js","./ui/project-workspace.js","./ui/project-bootstrap.js","./ui/projects-library.js",
+  "./","./index.html","./ui/styles.css","./ui/prompt-safety.css","./ui/compact-brief.css","./ui/projects-library.css","./ui/prompt-library.css","./ui/app.js",
+  "./ui/project-store.js","./ui/song-brief.js","./ui/project-workspace.js","./ui/project-bootstrap.js","./ui/projects-library.js","./ui/prompt-library.js",
   "./data/catalog.json","./data/presets-acoustic.json","./data/presets-modern.json","./data/project-schema.json",
   "./data/knowledge/manifest.json","./data/knowledge/reliability.json","./data/knowledge/evidence-registry.json",
   "./data/knowledge/workflow-stages.json","./data/knowledge/musical-roles.json","./manifest.webmanifest","./assets/icon.svg"
