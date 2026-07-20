@@ -1,0 +1,12 @@
+.home-button{font-weight:800}
+.prompt-library-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 180px auto;gap:10px;align-items:end;margin:0 0 12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2)}
+.prompt-library-toolbar label{font-size:11px;gap:5px}.prompt-library-count{min-height:38px;display:grid;place-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:var(--input);font-size:12px}
+.prompt-archive-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prompt-archive-card{display:grid;gap:10px;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--input)}
+.prompt-archive-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.prompt-archive-card h3{margin-top:6px;font-size:15px}.prompt-archive-card time{color:var(--muted);font-size:11px;white-space:nowrap}
+.prompt-status{display:inline-flex;padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:10px;color:var(--muted)}.prompt-status.accept{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}.prompt-status.reject{color:var(--danger);border-color:var(--danger);background:var(--danger-soft)}
+.prompt-meta{display:flex;gap:6px;flex-wrap:wrap}.prompt-meta span{padding:5px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:10px;background:var(--panel)}
+.prompt-archive-card details{border-top:1px solid var(--line);padding-top:9px}.prompt-archive-card summary{cursor:pointer;color:var(--label);font-size:12px}.prompt-archive-card textarea{margin-top:9px;min-height:150px;direction:ltr;text-align:left;font-family:Consolas,"Cascadia Mono",monospace;font-size:11px}.prompt-archive-card h4{margin:9px 0 4px;font-size:11px;color:var(--muted)}.prompt-archive-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.5;direction:ltr;text-align:left}
+.prompt-archive-card footer{display:flex;gap:7px;flex-wrap:wrap}.prompt-archive-card footer button{padding:7px 10px;font-size:11px}
+@media(max-width:850px){.prompt-archive-grid{grid-template-columns:1fr}.prompt-library-toolbar{grid-template-columns:1fr 1fr}.prompt-library-count{grid-column:1/-1}}
+@media(max-width:560px){.prompt-library-toolbar{grid-template-columns:1fr}.prompt-library-count{grid-column:auto}.prompt-archive-card>header{flex-direction:column}.prompt-archive-card time{white-space:normal}}
