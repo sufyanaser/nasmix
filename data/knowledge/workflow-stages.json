@@ -1,0 +1,123 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "principleAr": "التوزيع هو تحديد من يقود، من يدعم، من يجيب، ومتى يصمت الجميع.",
+  "stages": [
+    {
+      "id": "song-brief",
+      "order": 1,
+      "labelAr": "بطاقة العمل",
+      "purposeAr": "تثبيت هوية الأغنية والزمن والمقام قبل التوليد.",
+      "requiredFields": ["songName", "tempo", "timeSignature", "maqam", "duration", "guideType", "mainLeadRole"],
+      "gate": {
+        "type": "required-fields",
+        "messageAr": "لا يمكن تخطيط التوزيع قبل تثبيت السرعة والميزان والمقام والمدة ووظيفة العنصر القائد."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "structure",
+      "order": 2,
+      "labelAr": "البنية وخريطة الأقسام",
+      "purposeAr": "تحديد الأقسام وحدودها وكثافتها والعنصر القائد في كل قسم.",
+      "requiredFields": ["sections"],
+      "checks": ["nonOverlappingBars", "sectionLeaderDefined", "densityDefined"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "صحح حدود الأقسام وحدد القائد والكثافة قبل إنشاء التراكات."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "track-plan",
+      "order": 3,
+      "labelAr": "خطة التراكات",
+      "purposeAr": "تحويل احتياجات التوزيع إلى تراكات ذات وظائف محددة.",
+      "requiredFields": ["tracks"],
+      "checks": ["singleRolePerTrack", "timingRuleDefined", "priorityDefined", "noGenericTrackDescriptions"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "كل تراك يجب أن يملك وظيفة واحدة وقاعدة دخول وخروج واضحة."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "suno-reference",
+      "order": 4,
+      "labelAr": "مرجع Suno",
+      "purposeAr": "تجهيز Guide واضح وخفيف يثبت اللحن والزمن وطول الأقسام.",
+      "requiredFields": ["referenceFile", "referenceTempo", "referenceStart"],
+      "checks": ["tempoMatchesBrief", "referenceNotClipped", "referenceNotOverArranged"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "ملف الرفع يجب أن يكون واضحًا وغير مزدحم ومتوافقًا مع بطاقة العمل."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "prompt-builder",
+      "order": 5,
+      "labelAr": "بناء البرومبت",
+      "purposeAr": "تجميع الوظيفة وهوية الآلة والتوقيت والكثافة والمنع في برومبت واحد.",
+      "requiredFields": ["trackRole", "instrument", "timingBehavior", "density", "excludes"],
+      "checks": ["roleGuardApplied", "instrumentalVocalGuardApplied", "fullPromptGenerated"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "لا ترسل البرومبت قبل تحديد الدور والتوقيت والممنوعات."
+      },
+      "reliability": "C"
+    },
+    {
+      "id": "generation-review",
+      "order": 6,
+      "labelAr": "مراجعة النتائج",
+      "purposeAr": "فحص كل Take منفردًا ومع الجايد وقبول المادة الصالحة فقط.",
+      "requiredFields": ["takes"],
+      "checks": ["soloAuditionComplete", "contextAuditionComplete", "technicalInspectionComplete", "decisionRecorded"],
+      "gate": {
+        "type": "accepted-take-required",
+        "messageAr": "لا ينتقل التراك إلى Cubase قبل وجود Take مقبول ومكتمل الفحص."
+      },
+      "reliability": "C"
+    },
+    {
+      "id": "cubase-handoff",
+      "order": 7,
+      "labelAr": "تسليم Cubase",
+      "purposeAr": "توحيد التسمية ونقطة البداية والسرعة ومجلدات الاستيراد.",
+      "requiredFields": ["sampleRate", "bitDepth", "commonStart", "importManifest"],
+      "checks": ["acceptedTakesOnly", "sampleRateConsistent", "tempoConsistent", "commonStartDefined"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "صحح Manifest ونقطة البداية وتناسق السرعة قبل الاستيراد."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "arrangement-mix",
+      "order": 8,
+      "labelAr": "التوزيع والمكس الأولي",
+      "purposeAr": "إدارة الزمن والتردد والصورة والعمق مع الحفاظ على مساحة الفوكال.",
+      "requiredFields": ["sectionReviews", "staticMixReview"],
+      "checks": ["vocalSpaceAvailable", "monoCheckComplete", "densityVariesBySection", "noDuplicateRoles"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "لا تنتقل للتصدير مع ازدحام وظيفي أو فشل Mono أو غياب مساحة الفوكال."
+      },
+      "reliability": "B"
+    },
+    {
+      "id": "final-qa-export",
+      "order": 9,
+      "labelAr": "التحقق والتصدير",
+      "purposeAr": "إغلاق المشاكل الفنية وإنتاج المكس والـStems بإصدارات واضحة.",
+      "requiredFields": ["qaChecklist", "exportManifest", "versionName"],
+      "checks": ["noCriticalChecksOpen", "stemsShareBoundaries", "versionNamingValid", "rejectedFilesExcluded"],
+      "gate": {
+        "type": "checks-pass",
+        "messageAr": "لا يمكن إعلان المشروع Final مع فحص حرج مفتوح."
+      },
+      "reliability": "B"
+    }
+  ]
+}
