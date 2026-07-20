@@ -1,259 +1,97 @@
 <!doctype html>
 <html lang="ar" dir="rtl" data-theme="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0e13" />
-  <meta name="color-scheme" content="dark light" />
-  <meta name="application-name" content="NASMIX" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NASMIX" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0e13">
+  <meta name="color-scheme" content="dark light">
+  <meta name="application-name" content="NASMIX">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="NASMIX">
   <title>NASMIX</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="ui/styles.css" />
-  <link rel="stylesheet" href="ui/prompt-safety.css" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="ui/styles.css">
+  <link rel="stylesheet" href="ui/prompt-safety.css">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">NASMIX</p>
-        <h1>مساعد قرارات التوزيع</h1>
+<main class="app-shell">
+  <header class="topbar">
+    <div><p class="eyebrow">NASMIX</p><h1>مشاريع التوزيع الموسيقي</h1></div>
+    <div class="topbar-actions">
+      <button id="themeToggle" class="icon-button" type="button"><span id="themeIcon">☾</span><span id="themeLabel">داكن</span></button>
+      <button id="installButton" class="secondary-button" type="button" hidden>تثبيت</button>
+      <span id="dataStatus" class="status">جاري تحميل البيانات…</span>
+    </div>
+  </header>
+
+  <section id="projectPanel" class="project-panel" aria-label="مشروع الأغنية">
+    <div class="project-toolbar">
+      <div class="project-selector-group">
+        <label>المشروع<select id="projectSelect"></select></label>
+        <label>اسم المشروع<input id="projectNameInput" type="text" placeholder="اسم الأغنية"></label>
       </div>
-
-      <div class="topbar-actions">
-        <button id="themeToggle" class="icon-button" type="button" aria-label="تبديل المظهر" title="تبديل المظهر">
-          <span id="themeIcon" aria-hidden="true">☾</span>
-          <span id="themeLabel">داكن</span>
-        </button>
-        <button id="installButton" class="secondary-button" type="button" hidden>تثبيت على سطح المكتب</button>
-        <span id="dataStatus" class="status">جاري تحميل البيانات…</span>
+      <div class="project-actions">
+        <button id="newProjectButton" type="button">مشروع أغنية جديد</button>
+        <button id="saveProjectButton" class="secondary-button" type="button">حفظ</button>
+        <button id="exportProjectButton" class="secondary-button" type="button">تصدير JSON</button>
+        <label class="file-button secondary-button" for="importProjectInput">استيراد</label>
+        <input id="importProjectInput" type="file" accept="application/json,.json" hidden>
+        <button id="deleteProjectButton" class="danger-button" type="button">حذف</button>
       </div>
-    </header>
+    </div>
+    <div class="stage-strip">
+      <span class="stage-chip active">01 Song Brief</span><span class="stage-chip">02 Structure</span><span class="stage-chip">03 Track Plan</span><span class="stage-chip">04 Suno Reference</span><span class="stage-chip">05 Generate</span><span class="stage-chip">06 Review</span><span class="stage-chip">07 Cubase</span><span class="stage-chip">08 Mix</span><span class="stage-chip">09 Export</span>
+    </div>
+    <div class="project-summary"><div><span>التقدم</span><strong id="projectProgress">0 / 9</strong></div><p id="briefGateStatus" class="gate-status blocked">أدخل بيانات الأغنية لفتح المشروع</p><p id="projectStatus" class="project-status">تهيئة المشروع…</p></div>
+    <form id="songBriefForm" class="brief-form" autocomplete="off">
+      <label>اسم الأغنية<input id="briefSongName" type="text"></label>
+      <label>السرعة BPM<input id="briefTempo" type="number" min="40" max="220" value="96"></label>
+      <label>الميزان<select id="briefTimeSignature"><option>4/4</option><option>3/4</option><option>6/8</option><option>5/4</option><option>7/8</option></select></label>
+      <label>الدرجة<input id="briefKey" type="text" value="D"></label>
+      <label>المقام<select id="briefMaqam"><option>Bayati</option><option>Rast</option><option>Hijaz</option><option>Saba</option><option>Sikah</option><option>Nahawand</option><option>Kurdi</option><option>Ajam</option></select></label>
+      <label>المدة MM:SS<input id="briefDuration" type="text" value="03:45"></label>
+      <label>الإحساس<input id="briefMood" type="text"></label>
+      <label>المرجع<input id="briefReferenceTrack" type="text"></label>
+      <label>مدى الفوكال<input id="briefVocalRange" type="text"></label>
+      <label>الآلة القائدة<input id="briefMainInstrument" type="text"></label>
+      <label>الإيقاع الأساسي<input id="briefPrimaryGroove" type="text"></label>
+      <label>قسم الذروة<input id="briefPeakSection" type="text" value="Final Chorus"></label>
+      <label>نوع النهاية<input id="briefEndingType" type="text"></label>
+      <label>نوع الجايد<select id="briefGuideType"><option>Temporary Vocal Placeholder</option><option>Scratch Vocal</option><option>Violin Melody Guide</option><option>Piano Melody Guide</option><option>MIDI Melody Guide</option></select></label>
+    </form>
+  </section>
 
-    <section id="projectPanel" class="project-panel" aria-label="مشروع NASMIX">
-      <div class="project-toolbar">
-        <div class="project-selector-group">
-          <label>المشروع
-            <select id="projectSelect" aria-label="اختيار المشروع"></select>
-          </label>
-          <label>اسم المشروع
-            <input id="projectNameInput" type="text" placeholder="NAS Song 01" />
-          </label>
-        </div>
-        <div class="project-actions">
-          <button id="newProjectButton" type="button">مشروع جديد</button>
-          <button id="saveProjectButton" class="secondary-button" type="button">حفظ</button>
-          <button id="exportProjectButton" class="secondary-button" type="button">تصدير JSON</button>
-          <label class="file-button secondary-button" for="importProjectInput">استيراد JSON</label>
-          <input id="importProjectInput" type="file" accept="application/json,.json" hidden />
-          <button id="deleteProjectButton" class="danger-button" type="button">حذف</button>
-        </div>
-      </div>
-
-      <div class="stage-strip" aria-label="تقدم المشروع">
-        <span class="stage-chip active">01 Song Brief</span>
-        <span class="stage-chip">02 Structure</span>
-        <span class="stage-chip">03 Track Plan</span>
-        <span class="stage-chip">04 Suno Reference</span>
-        <span class="stage-chip">05 Generate</span>
-        <span class="stage-chip">06 Review</span>
-        <span class="stage-chip">07 Cubase</span>
-        <span class="stage-chip">08 Mix</span>
-        <span class="stage-chip">09 Export</span>
-      </div>
-
-      <div class="project-summary">
-        <div>
-          <span>التقدم</span>
-          <strong id="projectProgress">0 / 9</strong>
-        </div>
-        <p id="briefGateStatus" class="gate-status blocked">بوابة Song Brief غير مكتملة</p>
-        <p id="projectStatus" class="project-status" aria-live="polite">تهيئة المشروع…</p>
-      </div>
-
-      <form id="songBriefForm" class="brief-form" autocomplete="off">
-        <label>اسم الأغنية
-          <input id="briefSongName" type="text" placeholder="NAS Song 01" />
-        </label>
-        <label>السرعة BPM
-          <input id="briefTempo" type="number" min="40" max="220" value="96" />
-        </label>
-        <label>الميزان
-          <select id="briefTimeSignature">
-            <option value="4/4">4/4</option>
-            <option value="3/4">3/4</option>
-            <option value="6/8">6/8</option>
-            <option value="5/4">5/4</option>
-            <option value="7/8">7/8</option>
-          </select>
-        </label>
-        <label>الدرجة
-          <input id="briefKey" type="text" value="D" placeholder="D" />
-        </label>
-        <label>المقام
-          <select id="briefMaqam">
-            <option>Bayati</option>
-            <option>Rast</option>
-            <option>Hijaz</option>
-            <option>Saba</option>
-            <option>Sikah</option>
-            <option>Nahawand</option>
-            <option>Kurdi</option>
-            <option>Ajam</option>
-          </select>
-        </label>
-        <label>المدة MM:SS
-          <input id="briefDuration" type="text" inputmode="numeric" value="03:45" placeholder="03:45" />
-        </label>
-        <label>الإحساس
-          <input id="briefMood" type="text" placeholder="Iraqi emotional modern pop" />
-        </label>
-        <label>المرجع
-          <input id="briefReferenceTrack" type="text" placeholder="اسم أو وصف المرجع" />
-        </label>
-        <label>مدى الفوكال
-          <input id="briefVocalRange" type="text" placeholder="A2–F4" />
-        </label>
-        <label>الآلة القائدة
-          <input id="briefMainInstrument" type="text" placeholder="Joza" />
-        </label>
-        <label>الإيقاع الأساسي
-          <input id="briefPrimaryGroove" type="text" placeholder="Restrained Iraqi pop groove" />
-        </label>
-        <label>قسم الذروة
-          <input id="briefPeakSection" type="text" value="Final Chorus" />
-        </label>
-        <label>نوع النهاية
-          <input id="briefEndingType" type="text" placeholder="Short unresolved instrumental ending" />
-        </label>
-        <label>نوع الجايد
-          <select id="briefGuideType">
-            <option>Temporary Vocal Placeholder</option>
-            <option>Scratch Vocal</option>
-            <option>Violin Melody Guide</option>
-            <option>Piano Melody Guide</option>
-            <option>MIDI Melody Guide</option>
-          </select>
-        </label>
-      </form>
-    </section>
-
-    <section class="workspace">
-      <aside class="controls" aria-label="خيارات التوزيع">
-        <label>الوظيفة الموسيقية
-          <select id="roleSelect"></select>
-        </label>
-
-        <label>نوع التراك — Suno Category
-          <select id="categorySelect"></select>
-        </label>
-
-        <label>الخيار الجاهز حسب الوظيفة
-          <select id="presetSelect"></select>
-        </label>
-
-        <button id="customPresetToggle" class="custom-toggle" type="button" aria-expanded="false">
-          <span aria-hidden="true">＋</span>
-          <span>خيار مخصص غير مدرج</span>
-        </button>
-
-        <section id="customPresetFields" class="custom-fields" hidden aria-label="الخيار المخصص">
-          <label>اسم الخيار
-            <input id="customNameInput" type="text" placeholder="مثال: ليد خارجي خاص" />
-          </label>
-          <label>وصف الصوت أو البرومبت
-            <textarea id="customPromptInput" rows="5" placeholder="اكتب وصف الخيار الخارجي هنا..."></textarea>
-          </label>
-          <label>Exclude إضافي
-            <textarea id="customExcludeInput" rows="3" placeholder="اكتب العناصر الممنوعة، مفصولة بفواصل أو أسطر"></textarea>
-          </label>
-        </section>
-
-        <label>الهوية
-          <select id="identitySelect"></select>
-        </label>
-
-        <label>الإحساس
-          <select id="emotionSelect"></select>
-        </label>
-
-        <label>موضع الاستخدام
-          <select id="sectionSelect"></select>
-        </label>
-
-        <label>السرعة BPM
-          <input id="tempoInput" type="number" min="40" max="220" value="96" />
-        </label>
-      </aside>
-
-      <section class="result-panel">
-        <div class="result-heading">
-          <div>
-            <span class="label">القرار المقترح</span>
-            <h2 id="decisionTitle">—</h2>
-          </div>
-        </div>
-
-        <div class="prompt-card full-prompt-card">
-          <div class="prompt-card-header">
-            <div>
-              <h3>برومبت Suno الكامل — استخدم هذا</h3>
-              <p class="prompt-note safe-note">يجمع وصف الآلة والدور مع عقد العزل. الصقه في خانة Styles.</p>
-            </div>
-            <button id="copyFullButton" class="copy-icon-button" type="button" aria-label="نسخ برومبت Suno الكامل" title="نسخ برومبت Suno الكامل">
-              <span class="copy-glyph" aria-hidden="true">⧉</span>
-            </button>
-          </div>
-          <textarea id="fullPromptOutput" readonly></textarea>
-        </div>
-
-        <div class="prompt-card">
-          <div class="prompt-card-header">
-            <div>
-              <h3>الوصف الموسيقي</h3>
-              <p class="prompt-note">وصف إيجابي للآلة والدور والهوية.</p>
-            </div>
-            <button id="copyGeneralButton" class="copy-icon-button" type="button" aria-label="نسخ الوصف الموسيقي" title="نسخ الوصف الموسيقي">
-              <span class="copy-glyph" aria-hidden="true">⧉</span>
-            </button>
-          </div>
-          <textarea id="promptOutput" readonly></textarea>
-        </div>
-
-        <div class="prompt-card isolation-card">
-          <div class="prompt-card-header">
-            <div>
-              <h3>عقد العزل — ملحق فقط</h3>
-              <p class="prompt-note warning-note">لا يُستخدم منفردًا؛ لا يصف الآلة وقد يجعل Suno يتبع الفوكال المرجعي.</p>
-            </div>
-            <span class="locked-badge" title="يُدمج تلقائيًا داخل البرومبت الكامل" aria-label="يُدمج تلقائيًا داخل البرومبت الكامل">🔒</span>
-          </div>
-          <textarea id="isolationOutput" readonly></textarea>
-        </div>
-
-        <div class="prompt-card">
-          <div class="prompt-card-header">
-            <h3>Exclude</h3>
-          </div>
-          <textarea id="excludeOutput" readonly></textarea>
-        </div>
-
-        <div class="settings-grid">
-          <div><span>Category</span><strong id="categoryOutput">Custom</strong></div>
-          <div><span>Weirdness</span><strong id="weirdnessOutput">10%</strong></div>
-          <div><span>Style Influence</span><strong id="styleOutput">100%</strong></div>
-          <div><span>Audio Influence</span><strong id="audioOutput">0%</strong></div>
-        </div>
-
-        <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
+  <section class="workspace">
+    <aside class="controls">
+      <label>الوظيفة الموسيقية<select id="roleSelect"></select></label>
+      <label>نوع التراك — Suno Category<select id="categorySelect"></select></label>
+      <label>الخيار الجاهز<select id="presetSelect"></select></label>
+      <button id="customPresetToggle" class="custom-toggle" type="button" aria-expanded="false"><span aria-hidden="true">＋</span><span>خيار مخصص</span></button>
+      <section id="customPresetFields" class="custom-fields" hidden>
+        <label>اسم الخيار<input id="customNameInput" type="text"></label>
+        <label>وصف الصوت<textarea id="customPromptInput" rows="5"></textarea></label>
+        <label>Exclude إضافي<textarea id="customExcludeInput" rows="3"></textarea></label>
       </section>
+      <label>الهوية<select id="identitySelect"></select></label>
+      <label>الإحساس<select id="emotionSelect"></select></label>
+      <label>موضع الاستخدام<select id="sectionSelect"></select></label>
+      <label>السرعة BPM<input id="tempoInput" type="number" min="40" max="220" value="96"></label>
+    </aside>
+    <section class="result-panel">
+      <div class="result-heading"><div><span class="label">القرار المقترح</span><h2 id="decisionTitle">—</h2></div></div>
+      <div class="prompt-card full-prompt-card"><div class="prompt-card-header"><div><h3>برومبت Suno الكامل</h3><p class="prompt-note safe-note">احفظه داخل مشروع الأغنية من مرحلة التوليد.</p></div><button id="copyFullButton" class="copy-icon-button" type="button"><span class="copy-glyph">⧉</span></button></div><textarea id="fullPromptOutput" readonly></textarea></div>
+      <div class="prompt-card"><div class="prompt-card-header"><div><h3>الوصف الموسيقي</h3></div><button id="copyGeneralButton" class="copy-icon-button" type="button"><span class="copy-glyph">⧉</span></button></div><textarea id="promptOutput" readonly></textarea></div>
+      <div class="prompt-card isolation-card"><div class="prompt-card-header"><div><h3>عقد العزل</h3></div><span class="locked-badge">🔒</span></div><textarea id="isolationOutput" readonly></textarea></div>
+      <div class="prompt-card"><div class="prompt-card-header"><h3>Exclude</h3></div><textarea id="excludeOutput" readonly></textarea></div>
+      <div class="settings-grid"><div><span>Category</span><strong id="categoryOutput">Custom</strong></div><div><span>Weirdness</span><strong id="weirdnessOutput">10%</strong></div><div><span>Style Influence</span><strong id="styleOutput">100%</strong></div><div><span>Audio Influence</span><strong id="audioOutput">0%</strong></div></div>
+      <p id="copyFeedback" class="copy-feedback" aria-live="polite"></p>
     </section>
-  </main>
-  <script src="ui/project-store.js" defer></script>
-  <script src="ui/song-brief.js" defer></script>
-  <script src="ui/app.js" defer></script>
+  </section>
+</main>
+<script src="ui/project-store.js" defer></script>
+<script src="ui/song-brief.js" defer></script>
+<script src="ui/app.js" defer></script>
+<script src="ui/project-bootstrap.js" defer></script>
 </body>
 </html>
