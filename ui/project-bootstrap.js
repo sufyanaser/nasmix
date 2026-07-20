@@ -37,21 +37,13 @@
     };
   }
 
-  const script = document.createElement("script");
-  script.src = "ui/project-workspace.js";
-  script.defer = true;
-  script.onload = () => {
+  window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("saveCurrentPrompt")?.addEventListener("click", async () => {
       const snapshot = captureCurrentPrompt();
       if (!snapshot.fullPrompt.trim()) return;
       await window.NASMixSongBrief.mutate((project) => {
-        project.promptHistory.unshift({
-          ...snapshot,
-          id: window.NASMixProjectStore.createId("prompt"),
-          createdAt: new Date().toISOString()
-        });
+        project.promptHistory.unshift({ ...snapshot, id:window.NASMixProjectStore.createId("prompt"), createdAt:new Date().toISOString() });
       }, "حفظ الأمر الحالي داخل المشروع");
     });
-  };
-  document.body.appendChild(script);
+  });
 })();
