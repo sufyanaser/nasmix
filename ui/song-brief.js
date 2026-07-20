@@ -1,238 +1,163 @@
 (() => {
   "use strict";
 
-  const REQUIRED_FIELDS = [
-    "songName", "tempo", "timeSignature", "key", "maqam", "duration",
-    "mainInstrument", "primaryGroove", "peakSection", "endingType", "guideType"
-  ];
-
-  const ids = {
-    panel: "projectPanel",
-    form: "songBriefForm",
-    projectSelect: "projectSelect",
-    projectName: "projectNameInput",
-    save: "saveProjectButton",
-    create: "newProjectButton",
-    remove: "deleteProjectButton",
-    export: "exportProjectButton",
-    import: "importProjectInput",
-    status: "projectStatus",
-    gate: "briefGateStatus",
-    progress: "projectProgress"
+  const REQUIRED = ["songName","tempo","timeSignature","key","maqam","duration","mainInstrument","primaryGroove","peakSection","endingType","guideType"];
+  const fields = {
+    songName:"briefSongName", tempo:"briefTempo", timeSignature:"briefTimeSignature", key:"briefKey", maqam:"briefMaqam",
+    duration:"briefDuration", mood:"briefMood", referenceTrack:"briefReferenceTrack", vocalRange:"briefVocalRange",
+    mainInstrument:"briefMainInstrument", primaryGroove:"briefPrimaryGroove", peakSection:"briefPeakSection",
+    endingType:"briefEndingType", guideType:"briefGuideType"
   };
-
-  const fieldIds = {
-    songName: "briefSongName",
-    tempo: "briefTempo",
-    timeSignature: "briefTimeSignature",
-    key: "briefKey",
-    maqam: "briefMaqam",
-    duration: "briefDuration",
-    mood: "briefMood",
-    referenceTrack: "briefReferenceTrack",
-    vocalRange: "briefVocalRange",
-    mainInstrument: "briefMainInstrument",
-    primaryGroove: "briefPrimaryGroove",
-    peakSection: "briefPeakSection",
-    endingType: "briefEndingType",
-    guideType: "briefGuideType"
-  };
-
+  const $ = (id) => document.getElementById(id);
   let activeProject = null;
-  let saveTimer = null;
+  let timer = null;
   let initialized = false;
 
-  const el = (id) => document.getElementById(id);
-
   function readBrief() {
-    const brief = {};
-    Object.entries(fieldIds).forEach(([key, id]) => {
-      const node = el(id);
-      brief[key] = node?.type === "number" ? Number(node.value) : String(node?.value || "").trim();
-    });
-    return brief;
+    return Object.fromEntries(Object.entries(fields).map(([key,id]) => {
+      const node = $(id);
+      return [key, node?.type === "number" ? Number(node.value) : String(node?.value || "").trim()];
+    }));
   }
 
-  function writeBrief(brief) {
-    Object.entries(fieldIds).forEach(([key, id]) => {
-      const node = el(id);
-      if (node) node.value = brief?.[key] ?? "";
-    });
-    const tempoInput = el("tempoInput");
-    if (tempoInput && brief?.tempo) {
-      tempoInput.value = brief.tempo;
-      tempoInput.dispatchEvent(new Event("input", { bubbles: true }));
+  function writeBrief(brief = {}) {
+    Object.entries(fields).forEach(([key,id]) => { if ($(id)) $(id).value = brief[key] ?? ""; });
+    if ($("tempoInput") && brief.tempo) {
+      $("tempoInput").value = brief.tempo;
+      $("tempoInput").dispatchEvent(new Event("input", { bubbles:true }));
     }
   }
 
   function validateBrief(brief) {
-    const missing = REQUIRED_FIELDS.filter((key) => {
-      const value = brief[key];
-      return value === "" || value === null || value === undefined;
-    });
-    const tempoValid = Number.isFinite(Number(brief.tempo)) && Number(brief.tempo) >= 40 && Number(brief.tempo) <= 220;
-    const durationValid = /^([0-5]?\d):([0-5]\d)$/.test(String(brief.duration || ""));
-    if (!tempoValid && !missing.includes("tempo")) missing.push("tempo");
-    if (!durationValid && !missing.includes("duration")) missing.push("duration");
+    const missing = REQUIRED.filter((key) => brief[key] === "" || brief[key] == null);
+    if (!(Number(brief.tempo) >= 40 && Number(brief.tempo) <= 220) && !missing.includes("tempo")) missing.push("tempo");
+    if (!/^([0-5]?\d):([0-5]\d)$/.test(String(brief.duration || "")) && !missing.includes("duration")) missing.push("duration");
     return { complete: missing.length === 0, missing };
+  }
+
+  function updateStages(project, complete) {
+    project.completedStages = complete ? [...new Set([...(project.completedStages || []), 1])] : (project.completedStages || []).filter((n) => n !== 1);
+    project.currentStage = complete ? Math.max(2, project.currentStage || 1) : 1;
+  }
+
+  function projectFromForm() {
+    if (!activeProject) return null;
+    activeProject.name = $("projectNameInput").value.trim() || readBrief().songName || "NAS Project";
+    activeProject.brief = readBrief();
+    updateStages(activeProject, validateBrief(activeProject.brief).complete);
+    return activeProject;
   }
 
   function renderGate() {
     if (!activeProject) return;
     const result = validateBrief(readBrief());
-    const gate = el(ids.gate);
-    const progress = el(ids.progress);
-    if (result.complete) {
-      gate.textContent = "بوابة Song Brief مكتملة — المرحلة التالية متاحة";
-      gate.className = "gate-status complete";
-      progress.textContent = "1 / 9";
-    } else {
-      gate.textContent = `البيانات المطلوبة المتبقية: ${result.missing.length}`;
-      gate.className = "gate-status blocked";
-      progress.textContent = "0 / 9";
-    }
+    $("briefGateStatus").textContent = result.complete ? "بيانات الأغنية مكتملة — مساحة العمل مفتوحة" : `البيانات المطلوبة المتبقية: ${result.missing.length}`;
+    $("briefGateStatus").className = `gate-status ${result.complete ? "complete" : "blocked"}`;
+    document.body.classList.toggle("project-open", result.complete);
   }
 
-  function projectFromForm() {
-    activeProject.name = el(ids.projectName).value.trim() || readBrief().songName || "NAS Project";
-    activeProject.brief = readBrief();
-    const validation = validateBrief(activeProject.brief);
-    activeProject.completedStages = validation.complete
-      ? [...new Set([...(activeProject.completedStages || []), 1])]
-      : (activeProject.completedStages || []).filter((stage) => stage !== 1);
-    activeProject.currentStage = validation.complete ? Math.max(2, activeProject.currentStage || 1) : 1;
-    return activeProject;
-  }
-
-  async function persist(showMessage = true) {
-    if (!activeProject) return;
-    activeProject = await window.NASMixProjectStore.save(projectFromForm());
-    if (showMessage) el(ids.status).textContent = "تم حفظ المشروع محليًا";
-    await refreshProjectSelect();
-    renderGate();
-  }
-
-  function queueSave() {
-    clearTimeout(saveTimer);
-    el(ids.status).textContent = "تغييرات غير محفوظة…";
-    saveTimer = window.setTimeout(() => persist(false), 450);
-    renderGate();
-  }
-
-  async function refreshProjectSelect() {
-    const select = el(ids.projectSelect);
+  async function refreshSelect() {
     const projects = await window.NASMixProjectStore.list();
-    select.innerHTML = "";
-    projects.forEach((project) => {
-      const option = document.createElement("option");
-      option.value = project.id;
-      option.textContent = project.name;
-      select.appendChild(option);
-    });
-    if (activeProject) select.value = activeProject.id;
+    $("projectSelect").innerHTML = projects.map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
+    if (activeProject) $("projectSelect").value = activeProject.id;
+  }
+
+  function publishProject() {
+    if (!activeProject) return;
+    window.dispatchEvent(new CustomEvent("nasmix:project-loaded", { detail: activeProject }));
   }
 
   function renderProject(project) {
     activeProject = window.NASMixProjectStore.normalizeProject(project);
     window.NASMixProjectStore.setActive(activeProject.id);
-    el(ids.projectName).value = activeProject.name;
+    $("projectNameInput").value = activeProject.name;
     writeBrief(activeProject.brief);
     renderGate();
-    el(ids.status).textContent = "المشروع جاهز";
+    $("projectStatus").textContent = "المشروع جاهز — الحفظ التلقائي فعال";
+    publishProject();
+  }
+
+  async function persist(show = false) {
+    const project = projectFromForm();
+    if (!project) return;
+    activeProject = await window.NASMixProjectStore.save(project);
+    if (show) $("projectStatus").textContent = "تم حفظ جميع بيانات المشروع";
+    await refreshSelect(); renderGate(); publishProject();
+  }
+
+  function queueSave() {
+    clearTimeout(timer);
+    $("projectStatus").textContent = "حفظ تلقائي…";
+    renderGate();
+    timer = setTimeout(() => persist(false), 350);
   }
 
   async function createNewProject() {
     const project = await window.NASMixProjectStore.save(window.NASMixProjectStore.createProject());
-    renderProject(project);
-    await refreshProjectSelect();
+    renderProject(project); await refreshSelect();
   }
 
-  async function loadInitialProject() {
-    const activeId = window.NASMixProjectStore.activeId();
-    const saved = activeId ? await window.NASMixProjectStore.get(activeId) : null;
-    if (saved) {
-      renderProject(saved);
-    } else {
-      const projects = await window.NASMixProjectStore.list();
-      if (projects.length) renderProject(projects[0]);
-      else await createNewProject();
+  async function loadInitial() {
+    const id = window.NASMixProjectStore.activeId();
+    const saved = id ? await window.NASMixProjectStore.get(id) : null;
+    if (saved) renderProject(saved);
+    else {
+      const list = await window.NASMixProjectStore.list();
+      if (list.length) renderProject(list[0]); else await createNewProject();
     }
-    await refreshProjectSelect();
+    await refreshSelect();
   }
 
-  function downloadProject() {
-    if (!activeProject) return;
+  function exportProject() {
     const project = projectFromForm();
-    const blob = new Blob([JSON.stringify(project, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(project, null, 2)], { type:"application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${project.name.replace(/[^\p{L}\p{N}_-]+/gu, "_") || "nasmix-project"}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
+    link.download = `${project.name.replace(/[^\p{L}\p{N}_-]+/gu,"_") || "nasmix-project"}.json`;
+    link.click(); URL.revokeObjectURL(link.href);
   }
 
   async function importProject(file) {
-    const text = await file.text();
-    const parsed = JSON.parse(text);
-    if (!parsed || typeof parsed !== "object" || !parsed.brief) throw new Error("Invalid NASMIX project");
-    parsed.id = window.NASMixProjectStore.createProject().id;
+    const parsed = JSON.parse(await file.text());
+    if (!parsed?.brief) throw new Error("Invalid NASMIX project");
+    parsed.id = window.NASMixProjectStore.createId();
     parsed.name = `${parsed.name || "Imported Project"} — مستورد`;
-    const saved = await window.NASMixProjectStore.save(parsed);
-    renderProject(saved);
-    await refreshProjectSelect();
+    renderProject(await window.NASMixProjectStore.save(parsed)); await refreshSelect();
   }
 
   function bind() {
-    el(ids.form).addEventListener("input", queueSave);
-    el(ids.projectName).addEventListener("input", queueSave);
-    el(ids.save).addEventListener("click", () => persist(true));
-    el(ids.create).addEventListener("click", createNewProject);
-    el(ids.export).addEventListener("click", downloadProject);
-    el(ids.projectSelect).addEventListener("change", async (event) => {
-      const project = await window.NASMixProjectStore.get(event.target.value);
-      if (project) renderProject(project);
+    $("songBriefForm").addEventListener("input", queueSave);
+    $("projectNameInput").addEventListener("input", queueSave);
+    $("saveProjectButton").addEventListener("click", () => persist(true));
+    $("newProjectButton").addEventListener("click", createNewProject);
+    $("exportProjectButton").addEventListener("click", exportProject);
+    $("projectSelect").addEventListener("change", async (e) => { const p = await window.NASMixProjectStore.get(e.target.value); if (p) renderProject(p); });
+    $("deleteProjectButton").addEventListener("click", async () => { if (!activeProject) return; await window.NASMixProjectStore.remove(activeProject.id); activeProject = null; await loadInitial(); });
+    $("importProjectInput").addEventListener("change", async (e) => {
+      const file = e.target.files?.[0]; if (!file) return;
+      try { await importProject(file); $("projectStatus").textContent = "تم استيراد المشروع"; }
+      catch { $("projectStatus").textContent = "ملف المشروع غير صالح"; }
+      e.target.value = "";
     });
-    el(ids.remove).addEventListener("click", async () => {
-      if (!activeProject) return;
-      await window.NASMixProjectStore.remove(activeProject.id);
-      activeProject = null;
-      await loadInitialProject();
+    $("briefTempo").addEventListener("input", () => {
+      if ($("tempoInput")) { $("tempoInput").value = $("briefTempo").value; $("tempoInput").dispatchEvent(new Event("input", { bubbles:true })); }
     });
-    el(ids.import).addEventListener("change", async (event) => {
-      const [file] = event.target.files || [];
-      if (!file) return;
-      try {
-        await importProject(file);
-        el(ids.status).textContent = "تم استيراد المشروع";
-      } catch (error) {
-        console.error(error);
-        el(ids.status).textContent = "ملف المشروع غير صالح";
-      } finally {
-        event.target.value = "";
-      }
-    });
-    el("briefTempo").addEventListener("input", () => {
-      const tempoInput = el("tempoInput");
-      if (tempoInput) {
-        tempoInput.value = el("briefTempo").value;
-        tempoInput.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    });
+  }
+
+  async function mutate(mutator, activity) {
+    if (!activeProject) return null;
+    mutator(activeProject);
+    if (activity) activeProject.activity.unshift({ id:window.NASMixProjectStore.createId("activity"), at:new Date().toISOString(), text:activity });
+    activeProject = await window.NASMixProjectStore.save(activeProject);
+    renderGate(); publishProject();
+    return activeProject;
   }
 
   async function init() {
-    if (initialized || !window.NASMixProjectStore || !el(ids.panel)) return;
-    initialized = true;
-    bind();
-    await loadInitialProject();
+    if (initialized || !window.NASMixProjectStore || !$("projectPanel")) return;
+    initialized = true; bind(); await loadInitial();
   }
 
-  window.NASMixSongBrief = { init, validateBrief, getActiveProject: () => activeProject };
-  window.addEventListener("DOMContentLoaded", () => {
-    init().catch((error) => {
-      console.error("Song Brief initialization failed", error);
-      const status = el(ids.status);
-      if (status) status.textContent = "تعذر تهيئة المشروع المحلي";
-    });
-  });
+  window.NASMixSongBrief = { init, validateBrief, getActiveProject:() => activeProject, persist, mutate };
+  window.addEventListener("DOMContentLoaded", () => init().catch(() => { if ($("projectStatus")) $("projectStatus").textContent = "تعذر تهيئة المشروع المحلي"; }));
 })();
