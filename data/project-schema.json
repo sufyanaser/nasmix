@@ -1,0 +1,25 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "project": {
+    "required": ["id", "name", "createdAt", "updatedAt", "currentStage", "brief"],
+    "stageRange": [1, 9],
+    "brief": {
+      "requiredForCompletion": [
+        "songName",
+        "tempo",
+        "timeSignature",
+        "key",
+        "maqam",
+        "duration",
+        "mainInstrument",
+        "primaryGroove",
+        "peakSection",
+        "endingType",
+        "guideType"
+      ],
+      "tempoRange": [40, 220],
+      "durationPattern": "^([0-5]?\\d):([0-5]\\d)$"
+    }
+  }
+}
