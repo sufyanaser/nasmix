@@ -1,14 +1,22 @@
-const CACHE_NAME = "nasmix-shell-v4";
+const CACHE_NAME = "nasmix-shell-v5";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./ui/styles.css",
   "./ui/prompt-safety.css",
+  "./ui/project-store.js",
+  "./ui/song-brief.js",
   "./ui/app.js",
   "./data/catalog.json",
   "./data/presets-acoustic.json",
   "./data/presets-modern.json",
+  "./data/project-schema.json",
+  "./data/knowledge/manifest.json",
+  "./data/knowledge/reliability.json",
+  "./data/knowledge/evidence-registry.json",
+  "./data/knowledge/workflow-stages.json",
+  "./data/knowledge/musical-roles.json",
   "./manifest.webmanifest",
   "./assets/icon.svg"
 ];
