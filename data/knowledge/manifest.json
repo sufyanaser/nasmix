@@ -1,0 +1,52 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "files": [
+    {
+      "id": "reliability",
+      "path": "data/knowledge/reliability.json",
+      "required": true,
+      "rootArray": "levels",
+      "uniqueKey": "id"
+    },
+    {
+      "id": "evidence-registry",
+      "path": "data/knowledge/evidence-registry.json",
+      "required": true,
+      "rootArray": "records",
+      "uniqueKey": "id"
+    },
+    {
+      "id": "workflow-stages",
+      "path": "data/knowledge/workflow-stages.json",
+      "required": true,
+      "rootArray": "stages",
+      "uniqueKey": "id"
+    },
+    {
+      "id": "musical-roles",
+      "path": "data/knowledge/musical-roles.json",
+      "required": true,
+      "rootArray": "roles",
+      "uniqueKey": "id"
+    }
+  ],
+  "validation": {
+    "requiredTopLevelFields": ["version", "updatedAt"],
+    "allowedReliability": ["A", "A-PENDING", "B", "C", "D"],
+    "officialEvidenceRule": {
+      "whenReliability": "A",
+      "requiredEvidenceStatus": "verified"
+    },
+    "workflowRules": {
+      "stageOrderStartsAt": 1,
+      "stageOrderMustBeContinuous": true,
+      "gateRequired": true
+    },
+    "roleRules": {
+      "purposeRequired": true,
+      "timingClassRequired": true,
+      "prohibitionsRequired": true
+    }
+  }
+}

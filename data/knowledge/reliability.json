@@ -1,0 +1,53 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "levels": [
+    {
+      "id": "A",
+      "labelAr": "موثق رسميًا",
+      "descriptionAr": "وظيفة أو إجراء مثبت في وثائق المنتج الحالية ومسجل في evidence-registry.json.",
+      "requiresEvidence": true,
+      "decisionRule": "May be presented as an available product capability only when the evidence record is verified."
+    },
+    {
+      "id": "B",
+      "labelAr": "قاعدة هندسية ثابتة",
+      "descriptionAr": "مبدأ إنتاج أو هندسة صوت قابل للتكرار ولا يعتمد على نتيجة توليد واحدة.",
+      "requiresEvidence": false,
+      "decisionRule": "May be used as a workflow rule, warning or stage gate."
+    },
+    {
+      "id": "C",
+      "labelAr": "نتيجة توليدية",
+      "descriptionAr": "النتيجة تعتمد على فحص الملف الناتج؛ صحة البرومبت لا تثبت صلاحية التراك.",
+      "requiresEvidence": false,
+      "decisionRule": "Must require audition and accept/reject review before production use."
+    },
+    {
+      "id": "D",
+      "labelAr": "مرفوض",
+      "descriptionAr": "افتراض غير قابل للتحقق أو نتيجة لا تصلح للإنتاج.",
+      "requiresEvidence": false,
+      "decisionRule": "Must not pass a workflow gate."
+    },
+    {
+      "id": "A-PENDING",
+      "labelAr": "بانتظار التحقق الرسمي",
+      "descriptionAr": "ادعاء منسوب إلى وثائق رسمية لكن سجل المصدر غير مكتمل أو لم يراجع للإصدار الحالي.",
+      "requiresEvidence": true,
+      "decisionRule": "Must not be displayed as verified until its evidence status becomes verified."
+    }
+  ],
+  "generationPolicy": {
+    "reliability": "C",
+    "pipeline": [
+      "prompt",
+      "generation",
+      "solo-audition",
+      "context-audition",
+      "technical-inspection",
+      "accept-or-reject"
+    ],
+    "ruleAr": "لا يعتمد التراك لأن وصف البرومبت صحيح. يعتمد فقط بعد سماعه منفردًا وداخل التوزيع وفحصه فنيًا."
+  }
+}
