@@ -33,6 +33,114 @@
       </div>
     </header>
 
+    <section id="projectPanel" class="project-panel" aria-label="مشروع NASMIX">
+      <div class="project-toolbar">
+        <div class="project-selector-group">
+          <label>المشروع
+            <select id="projectSelect" aria-label="اختيار المشروع"></select>
+          </label>
+          <label>اسم المشروع
+            <input id="projectNameInput" type="text" placeholder="NAS Song 01" />
+          </label>
+        </div>
+        <div class="project-actions">
+          <button id="newProjectButton" type="button">مشروع جديد</button>
+          <button id="saveProjectButton" class="secondary-button" type="button">حفظ</button>
+          <button id="exportProjectButton" class="secondary-button" type="button">تصدير JSON</button>
+          <label class="file-button secondary-button" for="importProjectInput">استيراد JSON</label>
+          <input id="importProjectInput" type="file" accept="application/json,.json" hidden />
+          <button id="deleteProjectButton" class="danger-button" type="button">حذف</button>
+        </div>
+      </div>
+
+      <div class="stage-strip" aria-label="تقدم المشروع">
+        <span class="stage-chip active">01 Song Brief</span>
+        <span class="stage-chip">02 Structure</span>
+        <span class="stage-chip">03 Track Plan</span>
+        <span class="stage-chip">04 Suno Reference</span>
+        <span class="stage-chip">05 Generate</span>
+        <span class="stage-chip">06 Review</span>
+        <span class="stage-chip">07 Cubase</span>
+        <span class="stage-chip">08 Mix</span>
+        <span class="stage-chip">09 Export</span>
+      </div>
+
+      <div class="project-summary">
+        <div>
+          <span>التقدم</span>
+          <strong id="projectProgress">0 / 9</strong>
+        </div>
+        <p id="briefGateStatus" class="gate-status blocked">بوابة Song Brief غير مكتملة</p>
+        <p id="projectStatus" class="project-status" aria-live="polite">تهيئة المشروع…</p>
+      </div>
+
+      <form id="songBriefForm" class="brief-form" autocomplete="off">
+        <label>اسم الأغنية
+          <input id="briefSongName" type="text" placeholder="NAS Song 01" />
+        </label>
+        <label>السرعة BPM
+          <input id="briefTempo" type="number" min="40" max="220" value="96" />
+        </label>
+        <label>الميزان
+          <select id="briefTimeSignature">
+            <option value="4/4">4/4</option>
+            <option value="3/4">3/4</option>
+            <option value="6/8">6/8</option>
+            <option value="5/4">5/4</option>
+            <option value="7/8">7/8</option>
+          </select>
+        </label>
+        <label>الدرجة
+          <input id="briefKey" type="text" value="D" placeholder="D" />
+        </label>
+        <label>المقام
+          <select id="briefMaqam">
+            <option>Bayati</option>
+            <option>Rast</option>
+            <option>Hijaz</option>
+            <option>Saba</option>
+            <option>Sikah</option>
+            <option>Nahawand</option>
+            <option>Kurdi</option>
+            <option>Ajam</option>
+          </select>
+        </label>
+        <label>المدة MM:SS
+          <input id="briefDuration" type="text" inputmode="numeric" value="03:45" placeholder="03:45" />
+        </label>
+        <label>الإحساس
+          <input id="briefMood" type="text" placeholder="Iraqi emotional modern pop" />
+        </label>
+        <label>المرجع
+          <input id="briefReferenceTrack" type="text" placeholder="اسم أو وصف المرجع" />
+        </label>
+        <label>مدى الفوكال
+          <input id="briefVocalRange" type="text" placeholder="A2–F4" />
+        </label>
+        <label>الآلة القائدة
+          <input id="briefMainInstrument" type="text" placeholder="Joza" />
+        </label>
+        <label>الإيقاع الأساسي
+          <input id="briefPrimaryGroove" type="text" placeholder="Restrained Iraqi pop groove" />
+        </label>
+        <label>قسم الذروة
+          <input id="briefPeakSection" type="text" value="Final Chorus" />
+        </label>
+        <label>نوع النهاية
+          <input id="briefEndingType" type="text" placeholder="Short unresolved instrumental ending" />
+        </label>
+        <label>نوع الجايد
+          <select id="briefGuideType">
+            <option>Temporary Vocal Placeholder</option>
+            <option>Scratch Vocal</option>
+            <option>Violin Melody Guide</option>
+            <option>Piano Melody Guide</option>
+            <option>MIDI Melody Guide</option>
+          </select>
+        </label>
+      </form>
+    </section>
+
     <section class="workspace">
       <aside class="controls" aria-label="خيارات التوزيع">
         <label>الوظيفة الموسيقية
@@ -144,6 +252,8 @@
       </section>
     </section>
   </main>
+  <script src="ui/project-store.js" defer></script>
+  <script src="ui/song-brief.js" defer></script>
   <script src="ui/app.js" defer></script>
 </body>
 </html>
