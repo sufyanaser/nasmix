@@ -20,30 +20,4 @@
     @media(max-width:560px){.production-workspace{margin:0 8px 8px}.entity-grid,.check-grid{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
-
-  function captureCurrentPrompt() {
-    return {
-      title: document.getElementById("decisionTitle")?.textContent || "Suno Prompt",
-      fullPrompt: document.getElementById("fullPromptOutput")?.value || "",
-      generalPrompt: document.getElementById("promptOutput")?.value || "",
-      isolation: document.getElementById("isolationOutput")?.value || "",
-      exclude: document.getElementById("excludeOutput")?.value || "",
-      settings: {
-        category: document.getElementById("categoryOutput")?.textContent || "",
-        weirdness: document.getElementById("weirdnessOutput")?.textContent || "",
-        style: document.getElementById("styleOutput")?.textContent || "",
-        audio: document.getElementById("audioOutput")?.textContent || ""
-      }
-    };
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("saveCurrentPrompt")?.addEventListener("click", async () => {
-      const snapshot = captureCurrentPrompt();
-      if (!snapshot.fullPrompt.trim()) return;
-      await window.NASMixSongBrief.mutate((project) => {
-        project.promptHistory.unshift({ ...snapshot, id:window.NASMixProjectStore.createId("prompt"), createdAt:new Date().toISOString() });
-      }, "حفظ الأمر الحالي داخل المشروع");
-    });
-  });
 })();
