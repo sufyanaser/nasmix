@@ -1,0 +1,142 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "policy": {
+    "officialLevel": "A",
+    "pendingLevel": "A-PENDING",
+    "requiredFields": [
+      "id",
+      "vendor",
+      "product",
+      "documentTitle",
+      "sourceUrl",
+      "verifiedAt",
+      "appliesToVersion",
+      "status"
+    ],
+    "ruleAr": "لا تصنف أي وظيفة على أنها A قبل تسجيل رابط الوثيقة وعنوانها والإصدار وتاريخ التحقق."
+  },
+  "records": [
+    {
+      "id": "cubase-import-audio-file",
+      "vendor": "Steinberg",
+      "product": "Cubase Pro",
+      "documentTitle": "Importing Audio Files",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "15.x",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "cubase-tempo-detection",
+      "vendor": "Steinberg",
+      "product": "Cubase Pro",
+      "documentTitle": "Tempo Detection Panel",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "15.x",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "cubase-musical-mode",
+      "vendor": "Steinberg",
+      "product": "Cubase Pro",
+      "documentTitle": "Musical Mode",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "15.x",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "cubase-audio-alignment",
+      "vendor": "Steinberg",
+      "product": "Cubase Pro",
+      "documentTitle": "Audio Alignment Panel",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "15.x",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "cubase-separate-stems",
+      "vendor": "Steinberg",
+      "product": "Cubase Pro",
+      "documentTitle": "Separating Stems",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "15.x",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-upload-timeline",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Upload and arrange audio in Studio",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-manual-bpm",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Project tempo and Manual BPM",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-time-signature",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Grid and time signature behavior",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-remove-fx",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Remove FX",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-warp-markers",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Warp Markers",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    },
+    {
+      "id": "suno-studio-export",
+      "vendor": "Suno",
+      "product": "Suno Studio",
+      "documentTitle": "Multitrack and WAV export",
+      "sourceUrl": "",
+      "verifiedAt": null,
+      "appliesToVersion": "1.2",
+      "status": "pending",
+      "temporaryReliability": "A-PENDING"
+    }
+  ]
+}
