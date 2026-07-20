@@ -1,0 +1,98 @@
+.compact-brief {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  align-items: end;
+}
+
+.compact-brief .brief-field {
+  grid-column: span 3;
+  min-width: 0;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--input);
+}
+
+.compact-brief .brief-field-wide { grid-column: span 6; }
+.compact-brief .brief-field-xs { grid-column: span 2; }
+
+.compact-brief .brief-field > span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.compact-brief input,
+.compact-brief select {
+  min-height: 34px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 12px;
+}
+
+.compact-brief input[type="number"],
+.compact-brief #briefDuration,
+.compact-brief #briefKey,
+.compact-brief #briefTimeSignature {
+  direction: ltr;
+  text-align: center;
+}
+
+.project-panel {
+  padding: 12px;
+}
+
+.project-toolbar {
+  align-items: center;
+}
+
+.project-selector-group label {
+  gap: 4px;
+  font-size: 11px;
+}
+
+.project-selector-group input,
+.project-selector-group select {
+  min-height: 36px;
+  padding: 7px 9px;
+}
+
+.project-actions button,
+.project-actions .file-button {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.stage-strip {
+  padding: 10px 0 8px;
+}
+
+.project-summary {
+  padding: 7px 0 9px;
+}
+
+@media (max-width: 1000px) {
+  .compact-brief .brief-field { grid-column: span 4; }
+  .compact-brief .brief-field-wide { grid-column: span 8; }
+  .compact-brief .brief-field-xs { grid-column: span 2; }
+}
+
+@media (max-width: 760px) {
+  .compact-brief { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .compact-brief .brief-field { grid-column: span 3; }
+  .compact-brief .brief-field-wide { grid-column: span 6; }
+  .compact-brief .brief-field-xs { grid-column: span 2; }
+}
+
+@media (max-width: 520px) {
+  .compact-brief { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .compact-brief .brief-field,
+  .compact-brief .brief-field-wide { grid-column: span 2; }
+  .compact-brief .brief-field-xs { grid-column: span 1; }
+}
