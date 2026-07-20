@@ -1,25 +1,29 @@
 {
-  "version": "0.1.0",
+  "version": "0.3.0",
   "updatedAt": "2026-07-20",
-  "project": {
-    "required": ["id", "name", "createdAt", "updatedAt", "currentStage", "brief"],
-    "stageRange": [1, 9],
-    "brief": {
-      "requiredForCompletion": [
-        "songName",
-        "tempo",
-        "timeSignature",
-        "key",
-        "maqam",
-        "duration",
-        "mainInstrument",
-        "primaryGroove",
-        "peakSection",
-        "endingType",
-        "guideType"
-      ],
-      "tempoRange": [40, 220],
-      "durationPattern": "^([0-5]?\\d):([0-5]\\d)$"
-    }
-  }
+  "entity": "NASMIXProject",
+  "storage": "IndexedDB with localStorage fallback",
+  "required": ["id", "name", "brief", "structure", "tracks", "promptHistory", "decisions", "takes", "cubase", "mixChecks", "exportChecks"],
+  "stageRange": [1, 9],
+  "brief": {
+    "requiredForCompletion": ["songName", "tempo", "timeSignature", "key", "maqam", "duration", "mainInstrument", "primaryGroove", "peakSection", "endingType", "guideType"],
+    "tempoRange": [40, 220],
+    "durationPattern": "^([0-5]?\\d):([0-5]\\d)$"
+  },
+  "collections": {
+    "structure": "ordered song sections",
+    "tracks": "role-first track requirements",
+    "promptHistory": "generated commands, excludes and settings",
+    "decisions": "accepted and rejected commands",
+    "takes": "generation review records",
+    "exports": "delivery history",
+    "activity": "autosaved activity log"
+  },
+  "objects": {
+    "sunoReference": "generation reference and notes",
+    "cubase": "handoff settings, folders, buses and notes",
+    "mixChecks": "mix QA state",
+    "exportChecks": "delivery QA state"
+  },
+  "autosave": { "enabled": true, "briefDebounceMs": 350, "workspaceActions": "immediate" }
 }
