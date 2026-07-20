@@ -2,11 +2,11 @@
 
 NASMIX is a project-first music production knowledge system for Iraqi and Arabic arrangement workflows.
 
-Development happens on the `develop` branch. The interface is intentionally lightweight; reusable musical knowledge lives in versioned JSON files under `data/`.
+Development happens on the `develop` branch. Reusable musical knowledge lives in versioned JSON files under `data/`.
 
 ## Song project workflow
 
-Every song is created as an independent local project. The project starts with a required Song Brief, then opens a nine-stage workspace:
+Every song is created as an independent local project. The project begins with a required Song Brief and then opens a nine-stage workspace:
 
 1. Song Brief
 2. Structure
@@ -18,7 +18,9 @@ Every song is created as an independent local project. The project starts with a
 8. Mix QA
 9. Export QA
 
-The project stores the arrangement structure, role-first track plan, generated prompts, successful and rejected decisions, reviewed takes, Cubase notes, QA checks, and export state. Changes are saved automatically to IndexedDB with a localStorage fallback. Complete projects can be exported and imported as JSON.
+Each project stores its song data, arrangement map, role-first track plan, generated prompts, accepted and rejected decisions, reviewed takes, Cubase handoff notes, QA checks, export state, and activity history.
+
+Changes are saved automatically to IndexedDB with a localStorage fallback. Complete projects can be exported and imported as JSON.
 
 ## Web App
 
