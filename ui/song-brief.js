@@ -40,6 +40,7 @@
 
   let activeProject = null;
   let saveTimer = null;
+  let initialized = false;
 
   const el = (id) => document.getElementById(id);
 
@@ -220,10 +221,18 @@
   }
 
   async function init() {
-    if (!window.NASMixProjectStore || !el(ids.panel)) return;
+    if (initialized || !window.NASMixProjectStore || !el(ids.panel)) return;
+    initialized = true;
     bind();
     await loadInitialProject();
   }
 
   window.NASMixSongBrief = { init, validateBrief, getActiveProject: () => activeProject };
+  window.addEventListener("DOMContentLoaded", () => {
+    init().catch((error) => {
+      console.error("Song Brief initialization failed", error);
+      const status = el(ids.status);
+      if (status) status.textContent = "تعذر تهيئة المشروع المحلي";
+    });
+  });
 })();
