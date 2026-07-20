@@ -1,6 +1,6 @@
-const CACHE_NAME = "nasmix-shell-v6";
+const CACHE_NAME = "nasmix-shell-v7";
 const APP_SHELL = [
-  "./","./index.html","./ui/styles.css","./ui/prompt-safety.css","./ui/app.js",
+  "./","./index.html","./ui/styles.css","./ui/prompt-safety.css","./ui/compact-brief.css","./ui/app.js",
   "./ui/project-store.js","./ui/song-brief.js","./ui/project-workspace.js","./ui/project-bootstrap.js",
   "./data/catalog.json","./data/presets-acoustic.json","./data/presets-modern.json","./data/project-schema.json",
   "./data/knowledge/manifest.json","./data/knowledge/reliability.json","./data/knowledge/evidence-registry.json",
