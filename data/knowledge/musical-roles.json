@@ -1,0 +1,116 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-07-20",
+  "ruleAr": "اختر الوظيفة قبل الآلة. الآلة الواحدة يمكن أن تؤدي أدوارًا مختلفة ولا تثبت فائدتها داخل التوزيع.",
+  "roles": [
+    {
+      "id": "guide",
+      "labelAr": "Guide",
+      "purposeAr": "تثبيت اللحن والبنية والوقفات مؤقتًا.",
+      "timingClass": "structural",
+      "promptGuards": ["clear complete phrases", "real section length", "clear phrase endings"],
+      "prohibitions": ["long reverb", "delay", "dense harmony", "fills inside vocal gaps"],
+      "reliability": "B"
+    },
+    {
+      "id": "foundation",
+      "labelAr": "Foundation",
+      "purposeAr": "بناء القاعدة المنخفضة والهارمونية وربط البيز بجسم التوزيع.",
+      "timingClass": "support",
+      "promptGuards": ["low density", "slow harmonic movement", "no attention-seeking contour"],
+      "prohibitions": ["lead melody", "vocal imitation", "ornamental runs"],
+      "reliability": "B"
+    },
+    {
+      "id": "groove",
+      "labelAr": "Groove",
+      "purposeAr": "تثبيت النبض والحركة وتوضيح بنية الأقسام.",
+      "timingClass": "continuous-variable",
+      "promptGuards": ["clear pulse", "section-aware fills", "space under vocal"],
+      "prohibitions": ["constant peak density", "fills without destination", "duplicate rhythmic function"],
+      "reliability": "B"
+    },
+    {
+      "id": "accompaniment",
+      "labelAr": "Accompaniment",
+      "purposeAr": "دعم الغناء هارمونيًا أو إيقاعيًا دون تقليد اللحن.",
+      "timingClass": "support",
+      "promptGuards": ["supports guide", "subordinate phrasing", "controlled density"],
+      "prohibitions": ["vocal melody doubling", "second lead", "continuous ornamentation"],
+      "reliability": "B"
+    },
+    {
+      "id": "pad-bed",
+      "labelAr": "Pad / Bed",
+      "purposeAr": "ملء الخلفية ببطء وإدارة العمق والاتساع.",
+      "timingClass": "sustained",
+      "promptGuards": ["slow attack", "controlled release", "sparse note changes", "section-limited use"],
+      "prohibitions": ["lead contour", "rhythmic pulse unless requested", "full-song continuous high bed"],
+      "reliability": "B"
+    },
+    {
+      "id": "fill",
+      "labelAr": "Fill",
+      "purposeAr": "جواب قصير داخل فراغ حقيقي بعد نهاية الجملة.",
+      "timingClass": "gap-only",
+      "entryRule": "after-complete-vocal-phrase",
+      "exitRule": "before-next-vocal-entry",
+      "maximumLengthBars": 2,
+      "promptGuards": ["one short answer", "intentional silence", "distinct from vocal melody"],
+      "prohibitions": ["continuous solo", "vocal overlap", "melody doubling", "unrelated accompaniment"],
+      "reliability": "B"
+    },
+    {
+      "id": "lazim",
+      "labelAr": "Lazim",
+      "purposeAr": "جملة هوية قصيرة مكتملة وقابلة للتكرار بين الأقسام أو داخل Hook.",
+      "timingClass": "motif",
+      "promptGuards": ["short", "memorable", "repeatable", "clear start and end", "maqam compatible"],
+      "prohibitions": ["vocal melody copy", "long solo", "unclear ending", "constant repetition"],
+      "reliability": "B"
+    },
+    {
+      "id": "counter-line",
+      "labelAr": "Counter Line",
+      "purposeAr": "خط مستقل يتحرك حول اللحن من دون منافسته.",
+      "timingClass": "intermittent-support",
+      "promptGuards": ["independent contour", "restricted register", "low density", "phrase-aware movement"],
+      "prohibitions": ["unison doubling", "second lead", "continuous movement under every word"],
+      "reliability": "B"
+    },
+    {
+      "id": "transition",
+      "labelAr": "Transition",
+      "purposeAr": "نقل المستمع إلى قسم جديد وتوجيه الحركة نحو حدث محدد.",
+      "timingClass": "boundary",
+      "promptGuards": ["short gesture", "clear destination", "ends on section boundary"],
+      "prohibitions": ["new theme", "long tail", "transition without destination"],
+      "reliability": "B"
+    },
+    {
+      "id": "lift",
+      "labelAr": "Lift",
+      "purposeAr": "رفع الكثافة أو الطاقة لفترة محددة في الذروة.",
+      "timingClass": "section-limited",
+      "promptGuards": ["controlled rise", "limited duration", "supports existing leader"],
+      "prohibitions": ["full-song activation", "new competing melody", "uncontrolled low-frequency buildup"],
+      "reliability": "B"
+    },
+    {
+      "id": "texture",
+      "labelAr": "Texture",
+      "purposeAr": "إضافة ملمس صوتي دون جملة موسيقية واضحة.",
+      "timingClass": "decorative",
+      "promptGuards": ["subtle", "non-melodic", "section-specific", "low attention"],
+      "prohibitions": ["lead melody", "obvious riser unless requested", "continuous masking layer"],
+      "reliability": "B"
+    }
+  ],
+  "invalidGenericDescriptions": [
+    "oriental instruments",
+    "full strings",
+    "arabic accompaniment",
+    "emotional orchestra",
+    "cinematic iraqi music"
+  ]
+}
